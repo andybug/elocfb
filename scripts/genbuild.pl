@@ -6,8 +6,6 @@ use Cwd 'abs_path';
 print "Please make a selection:\n";
 print "\t1. gcc\n";
 print "\t2. clang\n";
-print "\t3. scan-build (clang static analyzer)\n";
-print "\t4. llvm\n";
 print "\n\tq. quit\n\n";
 print "Selection: ";
 
@@ -15,12 +13,14 @@ print "Selection: ";
 $selection = <STDIN>;
 chomp($selection);
 
+if ($selction eq 'q') {
+	exit 0
+}
+
 # map selection to compiler string
 %compiler_map = (
 		'1', '/usr/bin/gcc',
-		'2', '/usr/bin/clang',
-		'3', '/usr/bin/scan-build',
-		'4', 'llvm' );
+		'2', '/usr/bin/clang' );
 $compiler = $compiler_map{$selection};
 
 # display build type selection menu
@@ -33,6 +33,10 @@ print "Selection: ";
 # get the user's input
 $selection = <STDIN>;
 chomp($selection);
+
+if ($selection eq 'q') {
+	exit 0;
+}
 
 # map selection to build type string
 %build_map = ( '1', 'Debug', '2', 'Release' );
