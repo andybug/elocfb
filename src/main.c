@@ -12,8 +12,9 @@ struct cmd_struct {
 };
 
 static const struct cmd_struct commands[] = {
-	{ "init",   cmd_init },
-	{ NULL,	    NULL     }
+	{ "init",	cmd_init  },
+	{ "parse",	cmd_parse },
+	{ NULL,		NULL      }
 };
 
 static const struct cmd_struct *find_command(const char *name)
@@ -45,14 +46,10 @@ static int run_command(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	int err = 0;
-
-	printf("argb[0] = %s\n", argv[0]);
+	int err = EXIT_FAILURE;
 
 	if (argc > 1)
 		err = run_command(argc, argv);
-	else
-		exit(EXIT_FAILURE);
 
 	exit(err);
 }
