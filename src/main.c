@@ -8,7 +8,7 @@
 
 struct cmd_struct {
 	const char *name;
-	int (*func)(int, const char**);
+	int (*func)(int, char**);
 };
 
 static const struct cmd_struct commands[] = {
@@ -32,7 +32,7 @@ static const struct cmd_struct *find_command(const char *name)
 
 static int run_command(int argc, char **argv)
 {
-	struct cmd_struct *cmd;
+	const struct cmd_struct *cmd;
 
 	cmd = find_command(argv[1]);
 	if (!cmd) {

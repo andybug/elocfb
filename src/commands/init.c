@@ -5,7 +5,7 @@
 
 #include "../commands.h"
 
-int cmd_init(int argc, const char **argv)
+int cmd_init(int argc, char **argv)
 {
 	char cwd[PATH_MAX];
 
