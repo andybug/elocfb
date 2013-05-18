@@ -1,10 +1,14 @@
 
+#define _XOPEN_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <regex.h>
 
 #include "parse.h"
+#include "results.h"
+#include "teams.h"
 
 static regex_t result_regex;
 static const char *result_pattern =
@@ -28,14 +32,56 @@ static void precompile(void)
 	}
 }
 
+static int match_to_int(const char *str, regmatch_t *match)
+{
+	char buf[64];
+	size_t len;
+
+	len = match->rm_eo - match->rm_so;
+	strncpy(buf, str + match->rm_so, len);
+	buf[len] = '\0';
+
+	return atoi(buf);
+}
+
+static time_t parse_date(const char *str, regmatch_t *match)
+{
+	char buf[64];
+	size_t len;
+	struct tm tm;
+
+	memset(&tm, 0, sizeof(struct tm));
+
+	len = match->rm_eo - match->rm_so;
+	strncpy(buf, str + match->rm_so, len);
+	buf[len] = '\0';
+
+	strptime(buf, "%m/%d/%y", &tm);
+	return mktime(&tm);
+}
+
+static void parse_record(const char *str, regmatch_t *matches)
+{
+	struct result *result = results + num_results;
+
+	if (strncmp("Home", str + matches[8].rm_so, 4) == 0) {
+		result->home_key = match_to_int(str, matches + 1);
+		result->away_key = match_to_int(str, matches + 4);
+		result->home_pts = (short) match_to_int(str, matches + 6);
+		result->away_pts = (short) match_to_int(str, matches + 7);
+		result->neutral = false;
+		result->date = parse_date(str, matches + 3);
+
+		num_results++;
+	}
+}
+
 int parse_ncaa(const char *file)
 {
 	char buf[512];
 	FILE *stream;
 	int failure;
 	int records = 0;
-
-	size_t len;
 	regmatch_t matches[9];
 
 	precompile();
@@ -50,6 +96,8 @@ int parse_ncaa(const char *file)
 		failure = regexec(&result_regex, buf, 9, matches, 0);
 		if (!failure)
 			records++;
+
+		parse_record(buf, matches);
 	}
 
 	printf("found %d records\n", records);
