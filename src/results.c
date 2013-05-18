@@ -57,3 +57,21 @@ void sort_results(void)
 		shift(results, 0, end);
 	}
 }
+
+int result_exists(int key1, int key2)
+{
+	int i;
+	struct result *r;
+
+	for (i = 0; i < num_results; i++) {
+		r = results + i;
+
+		if (r->home_key == key1 && r->away_key == key2)
+			return 1;
+
+		else if (r->home_key == key2 && r->away_key == key1)
+			return 1;
+	}
+
+	return 0;
+}

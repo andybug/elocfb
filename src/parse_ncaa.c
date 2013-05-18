@@ -63,6 +63,8 @@ static time_t parse_date(const char *str, regmatch_t *match)
 static void parse_record(const char *str, regmatch_t *matches)
 {
 	struct result *result = results + num_results;
+	int home_key;
+	int away_key;
 
 	if (strncmp("Home", str + matches[8].rm_so, 4) == 0) {
 		result->home_key = match_to_int(str, matches + 1);
@@ -70,6 +72,21 @@ static void parse_record(const char *str, regmatch_t *matches)
 		result->home_pts = (short) match_to_int(str, matches + 6);
 		result->away_pts = (short) match_to_int(str, matches + 7);
 		result->neutral = false;
+		result->date = parse_date(str, matches + 3);
+
+		num_results++;
+	} else if (strncmp("Neutral Site", str + matches[8].rm_so, 12) == 0) {
+		home_key = match_to_int(str, matches + 1);
+		away_key = match_to_int(str, matches + 4);
+
+		if (result_exists(home_key, away_key))
+			return;
+
+		result->home_key = home_key;
+		result->away_key = away_key;
+		result->home_pts = (short) match_to_int(str, matches + 6);
+		result->away_pts = (short) match_to_int(str, matches + 7);
+		result->neutral = true;
 		result->date = parse_date(str, matches + 3);
 
 		num_results++;
@@ -94,13 +111,14 @@ int parse_ncaa(const char *file)
 
 	while (fgets(buf, 512, stream)) {
 		failure = regexec(&result_regex, buf, 9, matches, 0);
-		if (!failure)
+		if (!failure) {
 			records++;
-
-		parse_record(buf, matches);
+			parse_record(buf, matches);
+		}
 	}
 
 	printf("found %d records\n", records);
+	printf("found %d unique records\n", num_results);
 	fclose(stream);
 	return 0;
 }
