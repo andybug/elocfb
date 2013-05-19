@@ -85,7 +85,7 @@ static void parse_record(const char *str, regmatch_t *matches)
 		return;
 
 	if (key != prev_key) {
-		team = create_team(result->home_key);
+		team = create_team(key);
 		parse_team(str, matches + 2, team->name);
 		num_teams++;
 		prev_key = key;

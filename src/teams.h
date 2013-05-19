@@ -12,6 +12,8 @@ struct team {
 
 	unsigned char wins;
 	unsigned char losses;
+
+	float winper;
 };
 
 extern struct team teams[MAX_TEAMS];
