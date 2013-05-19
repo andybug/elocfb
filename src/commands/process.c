@@ -20,6 +20,7 @@ int cmd_process(int argc, char **argv)
 	sort_results();
 
 	algo_winper();
+	algo_rpi();
 
 	return EXIT_SUCCESS;
 }
