@@ -18,16 +18,16 @@ void init_teams(void)
 
 struct team *create_team(int key)
 {
-	int i = key;
+	int i = key & mask;
 	int iters = 0;
 
-	while (teams[i & mask].key != 0) {
+	while (teams[i].key != 0) {
 		if (iters >= num_teams) {
 			fprintf(stderr, "%s: Team hash table full; could not add key '%d'\n", __func__, key);
 			exit(EXIT_FAILURE);
 		}
 
-		i++;
+		i = (i+1) & mask;
 		iters++;
 	}
 

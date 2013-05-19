@@ -19,5 +19,6 @@ extern struct result results[MAX_RESULTS];
 extern int num_results;
 
 extern void sort_results(void);
+extern int result_exists(int key1, int key2, time_t date);
 
 #endif

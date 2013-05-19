@@ -25,6 +25,7 @@ static void shift(struct result *a, int start, int end)
 			temp = a[root];
 			a[root] = a[swap];
 			a[swap] = temp;
+			root = swap;
 		} else
 			return;
 	}
@@ -56,4 +57,25 @@ void sort_results(void)
 		end--;
 		shift(results, 0, end);
 	}
+}
+
+int result_exists(int key1, int key2, time_t date)
+{
+	int i;
+	struct result *r;
+
+	for (i = 0; i < num_results; i++) {
+		r = results + i;
+
+		if (r->date != date)
+			continue;
+
+		if (r->home_key == key1 && r->away_key == key2)
+			return 1;
+
+		else if (r->home_key == key2 && r->away_key == key1)
+			return 1;
+	}
+
+	return 0;
 }

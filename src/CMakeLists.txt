@@ -5,5 +5,5 @@ PROJECT (SHINY-AVENGER)
 ADD_SUBDIRECTORY (commands)
 
 # create main shiny-avenger executable
-ADD_EXECUTABLE (shiny-avenger main.c teams.c results.c)
+ADD_EXECUTABLE (shiny-avenger main.c teams.c results.c parse_ncaa.c)
 TARGET_LINK_LIBRARIES (shiny-avenger commands)
