@@ -12,9 +12,10 @@ struct cmd_struct {
 };
 
 static const struct cmd_struct commands[] = {
-	{ "init",	cmd_init  },
-	{ "parse",	cmd_parse },
-	{ NULL,		NULL      }
+	{ "init",	cmd_init    },
+	{ "parse",	cmd_parse   },
+	{ "process",	cmd_process },
+	{ NULL,		NULL        }
 };
 
 static const struct cmd_struct *find_command(const char *name)
