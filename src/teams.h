@@ -18,7 +18,7 @@ extern struct team teams[MAX_TEAMS];
 extern int num_teams;
 
 void init_teams(void);
-struct team *create_team_unique(int key);
+struct team *create_team(int key);
 struct team *find_team(int key);
 
 #endif

@@ -71,41 +71,48 @@ static void parse_team(const char *str, regmatch_t *match, char *name)
 
 static void parse_record(const char *str, regmatch_t *matches)
 {
+	static int prev_key = 0;
 	struct result *result = results + num_results;
 	struct team *team;
-	int home_key;
-	int away_key;
+	int key, key2;
+	time_t date;
+
+	key = match_to_int(str, matches + 1);
+	key2 = match_to_int(str, matches + 4);
+	date = parse_date(str, matches + 3);
+
+	if (result_exists(key, key2, date))
+		return;
+
+	if (key != prev_key) {
+		team = create_team(result->home_key);
+		parse_team(str, matches + 2, team->name);
+		num_teams++;
+		prev_key = key;
+	}
 
 	if (strncmp("Home", str + matches[8].rm_so, 4) == 0) {
-		result->home_key = match_to_int(str, matches + 1);
-		result->away_key = match_to_int(str, matches + 4);
+		result->home_key = key;
+		result->away_key = key2;
 		result->home_pts = (short) match_to_int(str, matches + 6);
 		result->away_pts = (short) match_to_int(str, matches + 7);
 		result->neutral = false;
-		result->date = parse_date(str, matches + 3);
-		num_results++;
-
-		/* if this team doesnt already exist, create it */
-		team = create_team_unique(result->home_key);
-		if (team) {
-			parse_team(str, matches + 2, team->name);
-			num_teams++;
-		}
+	} else if (strncmp("Away", str + matches[8].rm_so, 4) == 0) {
+		result->home_key = key2;
+		result->away_key = key;
+		result->home_pts = (short) match_to_int(str, matches + 7);
+		result->away_pts = (short) match_to_int(str, matches + 6);
+		result->neutral = false;
 	} else if (strncmp("Neutral Site", str + matches[8].rm_so, 12) == 0) {
-		home_key = match_to_int(str, matches + 1);
-		away_key = match_to_int(str, matches + 4);
-
-		if (result_exists(home_key, away_key))
-			return;
-
-		result->home_key = home_key;
-		result->away_key = away_key;
+		result->home_key = key;
+		result->away_key = key2;
 		result->home_pts = (short) match_to_int(str, matches + 6);
 		result->away_pts = (short) match_to_int(str, matches + 7);
 		result->neutral = true;
-		result->date = parse_date(str, matches + 3);
-		num_results++;
 	}
+
+	result->date = date;
+	num_results++;
 }
 
 int parse_ncaa(const char *file)
