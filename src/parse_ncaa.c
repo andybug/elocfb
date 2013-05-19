@@ -60,9 +60,19 @@ static time_t parse_date(const char *str, regmatch_t *match)
 	return mktime(&tm);
 }
 
+static void parse_team(const char *str, regmatch_t *match, char *name)
+{
+	size_t len;
+
+	len = match->rm_eo - match->rm_so;
+	strncpy(name, str + match->rm_so, len);
+	name[len] = '\0';
+}
+
 static void parse_record(const char *str, regmatch_t *matches)
 {
 	struct result *result = results + num_results;
+	struct team *team;
 	int home_key;
 	int away_key;
 
@@ -73,8 +83,14 @@ static void parse_record(const char *str, regmatch_t *matches)
 		result->away_pts = (short) match_to_int(str, matches + 7);
 		result->neutral = false;
 		result->date = parse_date(str, matches + 3);
-
 		num_results++;
+
+		/* if this team doesnt already exist, create it */
+		team = create_team_unique(result->home_key);
+		if (team) {
+			parse_team(str, matches + 2, team->name);
+			num_teams++;
+		}
 	} else if (strncmp("Neutral Site", str + matches[8].rm_so, 12) == 0) {
 		home_key = match_to_int(str, matches + 1);
 		away_key = match_to_int(str, matches + 4);
@@ -88,7 +104,6 @@ static void parse_record(const char *str, regmatch_t *matches)
 		result->away_pts = (short) match_to_int(str, matches + 7);
 		result->neutral = true;
 		result->date = parse_date(str, matches + 3);
-
 		num_results++;
 	}
 }
@@ -119,6 +134,7 @@ int parse_ncaa(const char *file)
 
 	printf("found %d records\n", records);
 	printf("found %d unique records\n", num_results);
+	printf("found %d teams\n", num_teams);
 	fclose(stream);
 	return 0;
 }

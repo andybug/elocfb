@@ -25,6 +25,7 @@ static void shift(struct result *a, int start, int end)
 			temp = a[root];
 			a[root] = a[swap];
 			a[swap] = temp;
+			root = swap;
 		} else
 			return;
 	}
