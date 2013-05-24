@@ -21,6 +21,7 @@ int cmd_process(int argc, char **argv)
 
 	algo_winper();
 	algo_rpi();
+	algo_elo();
 
 	return EXIT_SUCCESS;
 }

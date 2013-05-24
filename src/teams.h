@@ -19,6 +19,8 @@ struct team {
 	short oowins;
 	short oolosses;
 	float rpi;
+
+	short elo;
 };
 
 extern struct team teams[MAX_TEAMS];

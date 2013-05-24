@@ -3,5 +3,6 @@
 
 extern void algo_winper(void);
 extern void algo_rpi(void);
+extern void algo_elo(void);
 
 #endif
