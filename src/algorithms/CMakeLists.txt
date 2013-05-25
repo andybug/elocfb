@@ -2,4 +2,4 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
 PROJECT (SHINY-AVENGER)
 
-ADD_LIBRARY (algorithms winper.c)
+ADD_LIBRARY (algorithms winper.c rpi.c elo.c)
