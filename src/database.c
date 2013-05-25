@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <postgresql/libpq-fe.h>
 
@@ -41,6 +42,17 @@ void db_disconnect(void)
 	}
 }
 
+static void psql_check_error(PGresult *res, const char *msg)
+{
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		fprintf(stderr, "%s: %s\n", msg, PQerrorMessage(psql));
+		PQclear(res);
+		db_disconnect();
+		exit(EXIT_FAILURE);
+	} else
+		PQclear(res);
+}
+
 void db_add_teams(void)
 {
 	PGresult *res;
@@ -48,27 +60,13 @@ void db_add_teams(void)
 	char buf[512];
 
 	res = PQexec(psql, "BEGIN");
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-		fprintf(stderr, "SQL BEGIN failed: %s\n",
-				PQerrorMessage(psql));
-		PQclear(res);
-		db_disconnect();
-		return;
-	}
-	PQclear(res);
+	psql_check_error(res, "SQL BEGIN failed");
 
 	res = PQexec(psql, "DROP TABLE IF EXISTS teams");
-	PQclear(res);
+	psql_check_error(res, "SQL DROP TABLE failed");
 
 	res = PQexec(psql, teams_table_sql);
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-		fprintf(stderr, "SQL CREATE TABLE failed: %s\n",
-				PQerrorMessage(psql));
-		PQclear(res);
-		db_disconnect();
-		return;
-	}
-	PQclear(res);
+	psql_check_error(res, "SQL CREATE TABLE failed");
 
 	for (i = 0; i < MAX_TEAMS; i++) {
 		if (teams[i].key == 0)
@@ -82,20 +80,9 @@ void db_add_teams(void)
 				teams[i].elo);
 
 		res = PQexec(psql, buf);
-		if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-			fprintf(stderr, "SQL INSERT failed: %s\n",
-					PQerrorMessage(psql));
-			PQclear(res);
-			db_disconnect();
-			return;
-		}
+		psql_check_error(res, "SQL INSERT failed");
 	}
 
 	res = PQexec(psql, "END");
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-		fprintf(stderr, "SQL END failed: %s\n",
-				PQerrorMessage(psql));
-		PQclear(res);
-		db_disconnect();
-	}
+	psql_check_error(res, "SQL END failed");
 }
