@@ -10,6 +10,14 @@
 
 static PGconn *psql = NULL;
 
+static const char *teams_table_sql =
+	"CREATE TABLE teams ("
+	"key integer,"
+	"name varchar(128),"
+	"winper float,"
+	"rpi float,"
+	"elo smallint)";
+
 int db_connect(void)
 {
 	static const char *conninfo = "dbname=shinyavengerdb user=shinyavenger";
@@ -52,7 +60,7 @@ void db_add_teams(void)
 	res = PQexec(psql, "DROP TABLE IF EXISTS teams");
 	PQclear(res);
 
-	res = PQexec(psql, "CREATE TABLE teams (name varchar(128))");
+	res = PQexec(psql, teams_table_sql);
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 		fprintf(stderr, "SQL CREATE TABLE failed: %s\n",
 				PQerrorMessage(psql));
@@ -66,7 +74,13 @@ void db_add_teams(void)
 		if (teams[i].key == 0)
 			continue;
 
-		sprintf(buf, "INSERT INTO teams (name) VALUES('%s')", teams[i].name);
+		sprintf(buf, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
+				teams[i].key,
+				teams[i].name,
+				teams[i].winper,
+				teams[i].rpi,
+				teams[i].elo);
+
 		res = PQexec(psql, buf);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 			fprintf(stderr, "SQL INSERT failed: %s\n",
