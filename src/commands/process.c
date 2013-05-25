@@ -7,9 +7,12 @@
 #include "../teams.h"
 #include "../results.h"
 #include "../algorithms.h"
+#include "../database.h"
 
 int cmd_process(int argc, char **argv)
 {
+	int err;
+
 	if (argc != 3) {
 		fprintf(stderr, "shiny-avenger process [file.csv]\n");
 		return EXIT_FAILURE;
@@ -22,6 +25,12 @@ int cmd_process(int argc, char **argv)
 	algo_winper();
 	algo_rpi();
 	algo_elo();
+
+	err = db_connect();
+	if (err)
+		return EXIT_FAILURE;
+
+	db_disconnect();
 
 	return EXIT_SUCCESS;
 }
