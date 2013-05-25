@@ -1,16 +1,17 @@
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../commands.h"
 #include "../parse.h"
 #include "../teams.h"
 #include "../results.h"
+#include "../algorithms.h"
 
-int cmd_parse(int argc, char **argv)
+int cmd_process(int argc, char **argv)
 {
 	if (argc != 3) {
-		fprintf(stderr, "shiny-avenger parse [file.csv]\n");
+		fprintf(stderr, "shiny-avenger process [file.csv]\n");
 		return EXIT_FAILURE;
 	}
 
@@ -18,8 +19,9 @@ int cmd_parse(int argc, char **argv)
 	parse_ncaa(argv[2]);
 	sort_results();
 
-	printf("found %d unique records\n", num_results);
-	printf("found %d teams\n", num_teams);
+	algo_winper();
+	algo_rpi();
+	algo_elo();
 
 	return EXIT_SUCCESS;
 }

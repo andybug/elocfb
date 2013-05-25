@@ -12,6 +12,15 @@ struct team {
 
 	unsigned char wins;
 	unsigned char losses;
+	float winper;
+
+	short owins;
+	short olosses;
+	short oowins;
+	short oolosses;
+	float rpi;
+
+	short elo;
 };
 
 extern struct team teams[MAX_TEAMS];

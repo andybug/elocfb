@@ -37,16 +37,14 @@ struct team *create_team(int key)
 
 struct team *find_team(int key)
 {
-	int i = key;
+	int i = key & mask;
 	int iters = 0;
 
-	while (teams[i & mask].key != key) {
-		if (iters >= num_teams) {
-			fprintf(stderr, "%s: Could not find team with key '%d'\n", __func__, key);
-			exit(EXIT_FAILURE);
-		}
+	while (teams[i].key != key) {
+		if (iters >= num_teams)
+			return NULL;
 
-		i++;
+		i = (i+1) & mask;
 		iters++;
 	}
 

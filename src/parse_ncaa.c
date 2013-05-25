@@ -85,7 +85,7 @@ static void parse_record(const char *str, regmatch_t *matches)
 		return;
 
 	if (key != prev_key) {
-		team = create_team(result->home_key);
+		team = create_team(key);
 		parse_team(str, matches + 2, team->name);
 		num_teams++;
 		prev_key = key;
@@ -120,7 +120,6 @@ int parse_ncaa(const char *file)
 	char buf[512];
 	FILE *stream;
 	int failure;
-	int records = 0;
 	regmatch_t matches[9];
 
 	precompile();
@@ -133,15 +132,10 @@ int parse_ncaa(const char *file)
 
 	while (fgets(buf, 512, stream)) {
 		failure = regexec(&result_regex, buf, 9, matches, 0);
-		if (!failure) {
-			records++;
+		if (!failure)
 			parse_record(buf, matches);
-		}
 	}
 
-	printf("found %d records\n", records);
-	printf("found %d unique records\n", num_results);
-	printf("found %d teams\n", num_teams);
 	fclose(stream);
 	return 0;
 }
