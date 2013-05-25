@@ -30,6 +30,7 @@ int cmd_process(int argc, char **argv)
 	if (err)
 		return EXIT_FAILURE;
 
+	db_add_teams();
 	db_disconnect();
 
 	return EXIT_SUCCESS;
