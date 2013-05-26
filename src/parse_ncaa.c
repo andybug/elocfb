@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include <regex.h>
 
 #include "parse.h"
@@ -20,6 +21,19 @@ static const char *result_pattern =
 	"\"([0-9]+)\","				/* 6. team score */
 	"\"([0-9]+)\","				/* 7. opp score */
 	"\"(Away|Home|Neutral Site)\"\n$";	/* 8. location */
+
+static const char *header_entries[] = {
+	"Institution ID",
+	"Institution",
+	"Game Date",
+	"Opponent ID",
+	"Opponent Name",
+	"Score For",
+	"Score Against",
+	"Location"
+};
+
+#define NUM_FIELDS 8
 
 static void precompile(void)
 {
@@ -115,26 +129,75 @@ static void parse_record(const char *str, regmatch_t *matches)
 	num_results++;
 }
 
+static int tokenize_line(char *line, char *tokens[NUM_FIELDS])
+{
+	bool inside = false;
+	int fields = 0;
+
+	while (*line) {
+		if (*line == '"') {
+			if (inside) {
+				*line = '\0';
+				inside = false;
+			} else {
+				inside = true;
+				tokens[fields] = line + 1;
+				fields++;
+			}
+		}
+
+		line++;
+	}
+
+	return fields;
+}
+
+static int parse_header(char *line)
+{
+	int i;
+	int num_tokens;
+	char *tokens[NUM_FIELDS];
+	bool error = false;
+
+	num_tokens = tokenize_line(line, tokens);
+
+	if (num_tokens != NUM_FIELDS)
+		error = true;
+
+	for (i = 0; i < num_tokens && !error; i++) {
+		if (strcmp(header_entries[i], tokens[i]) != 0)
+			error = true;
+	}
+
+	return error;
+}
+
 int parse_ncaa(const char *file)
 {
 	char buf[512];
 	FILE *stream;
 	int failure;
-	regmatch_t matches[9];
+	char *tokens[NUM_FIELDS];
+	int err;
 
 	precompile();
 
 	stream = fopen(file, "r");
 	if (!stream) {
-		fprintf(stderr, "couldn't open '%s'\n", file);
+		fprintf(stderr, "Couldn't open '%s'\n", file);
 		return 1;
 	}
 
-	while (fgets(buf, 512, stream)) {
-		failure = regexec(&result_regex, buf, 9, matches, 0);
-		if (!failure)
-			parse_record(buf, matches);
+	/* read the heading line and ensure it's what we want */
+	fgets(buf, 512, stream);
+	err = parse_header(buf);
+	if (err) {
+		fprintf(stderr, "File '%s' does not match expected header form\n", file);
+		return 1;
 	}
+
+	/* while (fgets(buf, 512, stream)) {
+	} */
 
 	fclose(stream);
 	return 0;
