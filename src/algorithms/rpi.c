@@ -13,8 +13,8 @@ void algo_rpi(void)
 	for (i = 0; i < num_results; i++) {
 		r = results + i;
 
-		t1 = find_team(r->home_key);
-		t2 = find_team(r->away_key);
+		t1 = find_team(&team_map, r->home_key);
+		t2 = find_team(&team_map, r->away_key);
 
 		if (!t1 || !t2)
 			continue;
@@ -29,8 +29,8 @@ void algo_rpi(void)
 	for (i = 0; i < num_results; i++) {
 		r = results + i;
 
-		t1 = find_team(r->home_key);
-		t2 = find_team(r->away_key);
+		t1 = find_team(&team_map, r->home_key);
+		t2 = find_team(&team_map, r->away_key);
 
 		if (!t1 || !t2)
 			continue;
@@ -42,10 +42,7 @@ void algo_rpi(void)
 		t2->oolosses += t1->olosses;
 	}
 
-	for (i = 0; i < MAX_TEAMS; i++) {
-		if (teams[i].key == 0)
-			continue;
-
+	for (i = 0; i < num_teams; i++) {
 		owinper = (float) teams[i].owins /
 			(teams[i].owins + teams[i].olosses);
 		oowinper = (float) teams[i].oowins /

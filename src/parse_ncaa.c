@@ -57,8 +57,11 @@ static void parse_record(char *tokens[NUM_FIELDS])
 		return;
 
 	if (key != prev_key) {
-		team = create_team(key);
+		team = teams + num_teams;
+		team->key = key;
 		strcpy(team->name, tokens[FIELD_TEAM_NAME]);
+		add_team(&team_map, team);
+
 		num_teams++;
 		prev_key = key;
 	}
@@ -137,6 +140,9 @@ int parse_ncaa(const char *file)
 	char *tokens[NUM_FIELDS];
 	int num_tokens;
 	int err;
+
+	init_teams();
+	init_team_map(&team_map);
 
 	stream = fopen(file, "r");
 	if (!stream) {

@@ -11,12 +11,8 @@ static void seed_elo(void)
 {
 	int i;
 
-	for (i = 0; i < MAX_TEAMS; i++) {
-		if (teams[i].key == 0)
-			continue;
-
+	for (i = 0; i < num_teams; i++)
 		teams[i].elo = (short) (teams[i].rpi * 2.0 * ELO_AVERAGE);
-	}
 }
 
 void algo_elo(void)
@@ -29,8 +25,8 @@ void algo_elo(void)
 	seed_elo();
 
 	for (i = 0; i < num_results; i++) {
-		t1 = find_team(results[i].home_key);
-		t2 = find_team(results[i].away_key);
+		t1 = find_team(&team_map, results[i].home_key);
+		t2 = find_team(&team_map, results[i].away_key);
 
 		if (!t1 || !t2)
 			continue;

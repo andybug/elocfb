@@ -68,10 +68,7 @@ void db_add_teams(void)
 	res = PQexec(psql, teams_table_sql);
 	psql_check_error(res, "SQL CREATE TABLE failed");
 
-	for (i = 0; i < MAX_TEAMS; i++) {
-		if (teams[i].key == 0)
-			continue;
-
+	for (i = 0; i < num_teams; i++) {
 		sprintf(buf, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
 				teams[i].key,
 				teams[i].name,
