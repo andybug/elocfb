@@ -32,20 +32,25 @@ static const char *header_entries[] = {
 #define FIELD_LOCATION		7
 #define NUM_FIELDS 		8
 
+static struct team_map processed_teams;
+
 static time_t parse_date(const char *str)
 {
 	struct tm tm;
 
 	memset(&tm, 0, sizeof(struct tm));
+	tm.tm_isdst = -1;
+
 	strptime(str, "%m/%d/%y", &tm);
+
 	return mktime(&tm);
 }
 
 static void parse_record(char *tokens[NUM_FIELDS])
 {
 	static int prev_key = 0;
+	static struct team *team = NULL;
 	struct result *result = results + num_results;
-	struct team *team;
 	int key, key2;
 	time_t date;
 
@@ -53,10 +58,13 @@ static void parse_record(char *tokens[NUM_FIELDS])
 	key2 = atoi(tokens[FIELD_OPP_KEY]);
 	date = parse_date(tokens[FIELD_DATE]);
 
-	if (result_exists(key, key2, date))
+	if (find_team(&processed_teams, key2))
 		return;
 
 	if (key != prev_key) {
+		if (team)
+			add_team(&processed_teams, team);
+
 		team = teams + num_teams;
 		team->key = key;
 		strcpy(team->name, tokens[FIELD_TEAM_NAME]);
@@ -143,6 +151,7 @@ int parse_ncaa(const char *file)
 
 	init_teams();
 	init_team_map(&team_map);
+	init_team_map(&processed_teams);
 
 	stream = fopen(file, "r");
 	if (!stream) {

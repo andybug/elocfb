@@ -47,7 +47,7 @@ struct team *find_team(struct team_map *map, int key)
 	int iters = 0;
 
 	while (map->entries[i].key != key) {
-		if (iters >= num_teams)
+		if (map->entries[i].key == 0 || iters >= num_teams)
 			return NULL;
 
 		i = (i+1) & mask;
