@@ -177,6 +177,9 @@ int parse_ncaa(const char *file)
 			fprintf(stderr, "File '%s' does not match expected header form\n", file);
 			return 1;
 		}
+	} else {
+		fprintf(stderr, "Couldn't read from file '%s'\n", file);
+		return 1;
 	}
 
 	while (fgets(buf, 512, stream)) {
