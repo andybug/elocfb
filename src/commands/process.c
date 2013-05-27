@@ -18,7 +18,6 @@ int cmd_process(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	init_teams();
 	parse_ncaa(argv[2]);
 	sort_results();
 

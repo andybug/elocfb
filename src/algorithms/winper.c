@@ -14,8 +14,8 @@ void algo_winper(void)
 	for (i = 0; i < num_results; i++) {
 		result = results + i;
 
-		t1 = find_team(result->home_key);
-		t2 = find_team(result->away_key);
+		t1 = find_team(&team_map, result->home_key);
+		t2 = find_team(&team_map, result->away_key);
 
 		if (result->home_pts > result->away_pts) {
 			if (t1)
@@ -32,10 +32,7 @@ void algo_winper(void)
 		}
 	}
 
-	for (i = 0; i < MAX_TEAMS; i++) {
-		if (teams[i].key == 0)
-			continue;
-
+	for (i = 0; i < num_teams; i++) {
 		teams[i].winper = (float) teams[i].wins /
 			(teams[i].wins + teams[i].losses);
 	}

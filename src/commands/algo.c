@@ -68,10 +68,7 @@ static void add_teams_to_sort_list(void)
 	int i;
 	int added;
 
-	for (i = 0, added = 0; i < MAX_TEAMS; i++) {
-		if (teams[i].key == 0)
-			continue;
-
+	for (i = 0, added = 0; i < num_teams; i++) {
 		sorted_teams[added] = teams + i;
 		added++;
 	}
@@ -135,7 +132,6 @@ int cmd_algo(int argc, char **argv)
 	if (argc != 4)
 		return EXIT_FAILURE;
 
-	init_teams();
 	parse_ncaa(argv[3]);
 	sort_results();
 

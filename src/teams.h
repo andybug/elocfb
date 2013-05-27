@@ -23,11 +23,23 @@ struct team {
 	short elo;
 };
 
+struct team_map_entry {
+	int key;
+	struct team *team;
+};
+
+struct team_map {
+	struct team_map_entry entries[MAX_TEAMS];
+};
+
 extern struct team teams[MAX_TEAMS];
 extern int num_teams;
 
+extern struct team_map team_map;
+
 void init_teams(void);
-struct team *create_team(int key);
-struct team *find_team(int key);
+void init_team_map(struct team_map *map);
+void add_team(struct team_map *map, struct team *team);
+struct team *find_team(struct team_map *map, int key);
 
 #endif

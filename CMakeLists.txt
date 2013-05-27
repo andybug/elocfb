@@ -2,7 +2,7 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
 
 # set up compiler flags
-SET (CMAKE_C_FLAGS                "-Wall -Wextra -pedantic")
+SET (CMAKE_C_FLAGS                "-Wall -Wextra -pedantic --std=c99")
 SET (CMAKE_C_FLAGS_DEBUG          "-g")
 SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
