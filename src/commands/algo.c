@@ -35,8 +35,8 @@ static void display_winper(void)
 
 	for (i = 0; i < num_teams; i++) {
 		printf("%0.4f\t%s\n",
-				sorted_teams[i]->winper,
-				sorted_teams[i]->name);
+		       sorted_teams[i]->winper,
+		       sorted_teams[i]->name);
 	}
 }
 
@@ -46,8 +46,8 @@ static void display_rpi(void)
 
 	for (i = 0; i < num_teams; i++) {
 		printf("%0.4f\t%s\n",
-				sorted_teams[i]->rpi,
-				sorted_teams[i]->name);
+		       sorted_teams[i]->rpi,
+		       sorted_teams[i]->name);
 	}
 }
 
@@ -57,8 +57,8 @@ static void display_elo(void)
 
 	for (i = 0; i < num_teams; i++) {
 		printf("%04d\t%s\n",
-				sorted_teams[i]->elo,
-				sorted_teams[i]->name);
+		       sorted_teams[i]->elo,
+		       sorted_teams[i]->name);
 	}
 }
 

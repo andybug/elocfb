@@ -12,12 +12,12 @@
 static PGconn *psql = NULL;
 
 static const char *teams_table_sql =
-	"CREATE TABLE teams ("
-	"key integer,"
-	"name varchar(128),"
-	"winper float,"
-	"rpi float,"
-	"elo smallint)";
+        "CREATE TABLE teams ("
+        "key integer,"
+        "name varchar(128),"
+        "winper float,"
+        "rpi float,"
+        "elo smallint)";
 
 int db_connect(void)
 {
@@ -26,7 +26,7 @@ int db_connect(void)
 	psql = PQconnectdb(conninfo);
 	if (PQstatus(psql) != CONNECTION_OK) {
 		fprintf(stderr, "Failed to connect to the database: %s\n",
-				PQerrorMessage(psql));
+		        PQerrorMessage(psql));
 		db_disconnect();
 		return -1;
 	}
@@ -70,11 +70,11 @@ void db_add_teams(void)
 
 	for (i = 0; i < num_teams; i++) {
 		snprintf(buf, 512, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
-				teams[i].key,
-				teams[i].name,
-				teams[i].winper,
-				teams[i].rpi,
-				teams[i].elo);
+		         teams[i].key,
+		         teams[i].name,
+		         teams[i].winper,
+		         teams[i].rpi,
+		         teams[i].elo);
 
 		res = PQexec(psql, buf);
 		psql_check_error(res, "SQL INSERT failed");
