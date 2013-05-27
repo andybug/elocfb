@@ -40,6 +40,6 @@ void algo_elo(void)
 			t1win = 0.0;
 
 		t1->elo += (short) (32.0 * (t1win - exp1));
-		t2->elo += (short) (32.0 * ((t1win ? 0.0 : 1.0) - exp2));
+		t2->elo += (short) (32.0 * ((t1win == 1.0 ? 0.0 : 1.0) - exp2));
 	}
 }

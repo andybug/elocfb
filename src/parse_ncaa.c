@@ -46,7 +46,7 @@ static time_t parse_date(const char *str)
 	return mktime(&tm);
 }
 
-static void parse_record(char *tokens[NUM_FIELDS])
+static void parse_record(char *tokens[])
 {
 	static int prev_key = 0;
 	static struct team *team = NULL;
@@ -98,7 +98,7 @@ static void parse_record(char *tokens[NUM_FIELDS])
 	num_results++;
 }
 
-static int tokenize_line(char *line, char *tokens[NUM_FIELDS])
+static int tokenize_line(char *line, char *tokens[])
 {
 	bool inside = false;
 	int fields = 0;
@@ -160,11 +160,12 @@ int parse_ncaa(const char *file)
 	}
 
 	/* read the heading line and ensure it's what we want */
-	fgets(buf, 512, stream);
-	err = parse_header(buf);
-	if (err) {
-		fprintf(stderr, "File '%s' does not match expected header form\n", file);
-		return 1;
+	if (fgets(buf, 512, stream)) {
+		err = parse_header(buf);
+		if (err) {
+			fprintf(stderr, "File '%s' does not match expected header form\n", file);
+			return 1;
+		}
 	}
 
 	while (fgets(buf, 512, stream)) {

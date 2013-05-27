@@ -69,7 +69,7 @@ void db_add_teams(void)
 	psql_check_error(res, "SQL CREATE TABLE failed");
 
 	for (i = 0; i < num_teams; i++) {
-		sprintf(buf, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
+		snprintf(buf, 512, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
 				teams[i].key,
 				teams[i].name,
 				teams[i].winper,
