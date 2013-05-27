@@ -11,6 +11,10 @@
 #include "results.h"
 #include "teams.h"
 
+/*
+ * Specify the header columns. These are what we expect to be, in this order,
+ * on the first line of the input file
+ */
 static const char *header_entries[] = {
 	"Institution ID",
 	"Institution",
@@ -22,6 +26,7 @@ static const char *header_entries[] = {
 	"Location"
 };
 
+/* Indicies that correspond to the header_entries above */
 #define FIELD_TEAM_KEY		0
 #define FIELD_TEAM_NAME		1
 #define FIELD_DATE		2
@@ -32,7 +37,12 @@ static const char *header_entries[] = {
 #define FIELD_LOCATION		7
 #define NUM_FIELDS 		8
 
+/*
+ * This map tracks which teams have had their schedules completely parsed. This
+ * allows us to ignore records that have already been parsed.
+ */
 static struct team_map processed_teams;
+
 
 static time_t parse_date(const char *str)
 {
@@ -48,9 +58,10 @@ static time_t parse_date(const char *str)
 
 static void set_tz_env(void)
 {
-	/* ensure that the TZ environment variable is set, otherwise mktime
-	 * will run really slow */
-
+	/* 
+	 * Ensure that the TZ environment variable is set, otherwise mktime
+	 * will run really slow
+	 */
 	if (!getenv("TZ"))
 		setenv("TZ", "America/Chicago", 0);
 }
@@ -67,9 +78,17 @@ static void parse_record(char *tokens[])
 	key2 = atoi(tokens[FIELD_OPP_KEY]);
 	date = parse_date(tokens[FIELD_DATE]);
 
+	/*
+	 * if team2's schedule has already been processed,
+	 * ignore this record
+	 */
 	if (find_team(&processed_teams, key2))
 		return;
 
+	/*
+	 * if we're starting to process a new team's schedule, then add
+	 * the current team to the processed list and create the new team
+	 */
 	if (key != prev_key) {
 		if (team)
 			add_team(&processed_teams, team);

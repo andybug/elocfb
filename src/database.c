@@ -42,7 +42,7 @@ void db_disconnect(void)
 	}
 }
 
-static void psql_check_error(PGresult *res, const char *msg)
+static void check_error(PGresult *res, const char *msg)
 {
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 		fprintf(stderr, "%s: %s\n", msg, PQerrorMessage(psql));
@@ -60,13 +60,13 @@ void db_add_teams(void)
 	char buf[512];
 
 	res = PQexec(psql, "BEGIN");
-	psql_check_error(res, "SQL BEGIN failed");
+	check_error(res, "SQL BEGIN failed");
 
 	res = PQexec(psql, "DROP TABLE IF EXISTS teams");
-	psql_check_error(res, "SQL DROP TABLE failed");
+	check_error(res, "SQL DROP TABLE failed");
 
 	res = PQexec(psql, teams_table_sql);
-	psql_check_error(res, "SQL CREATE TABLE failed");
+	check_error(res, "SQL CREATE TABLE failed");
 
 	for (i = 0; i < num_teams; i++) {
 		snprintf(buf, 512, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
@@ -77,9 +77,9 @@ void db_add_teams(void)
 		         teams[i].elo);
 
 		res = PQexec(psql, buf);
-		psql_check_error(res, "SQL INSERT failed");
+		check_error(res, "SQL INSERT failed");
 	}
 
 	res = PQexec(psql, "END");
-	psql_check_error(res, "SQL END failed");
+	check_error(res, "SQL END failed");
 }

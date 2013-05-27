@@ -5,7 +5,8 @@
 #include "../teams.h"
 #include "../results.h"
 
-#define ELO_AVERAGE 1200.0
+#define ELO_AVERAGE 	1200.0
+#define ELO_KFACTOR	32.0
 
 static void seed_elo(void)
 {
@@ -20,7 +21,7 @@ void algo_elo(void)
 	int i;
 	struct team *t1, *t2;
 	double exp1, exp2;
-	double t1win;
+	double t1win, t2win;
 
 	seed_elo();
 
@@ -34,12 +35,15 @@ void algo_elo(void)
 		exp1 = 1.0 / (1.0 + pow(10, (t2->elo - t1->elo) / 400.0));
 		exp2 = 1.0 / (1.0 + pow(10, (t1->elo - t2->elo) / 400.0));
 
-		if (results[i].home_pts > results[i].away_pts)
+		if (results[i].home_pts > results[i].away_pts) {
 			t1win = 1.0;
-		else
+			t2win = 0.0;
+		} else {
 			t1win = 0.0;
+			t2win = 1.0;
+		}
 
-		t1->elo += (short)(32.0 * (t1win - exp1));
-		t2->elo += (short)(32.0 * ((t1win == 1.0 ? 0.0 : 1.0) - exp2));
+		t1->elo += (short)(ELO_KFACTOR * (t1win - exp1));
+		t2->elo += (short)(ELO_KFACTOR * (t2win - exp2));
 	}
 }

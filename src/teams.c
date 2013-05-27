@@ -29,7 +29,8 @@ void add_team(struct team_map *map, struct team *team)
 
 	while (map->entries[i].key != 0) {
 		if (iters >= num_teams) {
-			fprintf(stderr, "%s: Team hash table full; could not add key '%d'\n", __func__, team->key);
+			fprintf(stderr, "%s: Team hash table full; could not "
+			        "add key '%d'\n", __func__, team->key);
 			exit(EXIT_FAILURE);
 		}
 
