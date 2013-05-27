@@ -1,6 +1,6 @@
 
-/* need this for strptime() */
-#define _XOPEN_SOURCE
+/* need this for strptime() and setenv() */
+#define _XOPEN_SOURCE	600
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -44,6 +44,15 @@ static time_t parse_date(const char *str)
 	strptime(str, "%m/%d/%y", &tm);
 
 	return mktime(&tm);
+}
+
+static void set_tz_env(void)
+{
+	/* ensure that the TZ environment variable is set, otherwise mktime
+	 * will run really slow */
+
+	if (!getenv("TZ"))
+		setenv("TZ", "America/Chicago", 0);
 }
 
 static void parse_record(char *tokens[])
@@ -148,6 +157,8 @@ int parse_ncaa(const char *file)
 	char *tokens[NUM_FIELDS];
 	int num_tokens;
 	int err;
+
+	set_tz_env();
 
 	init_teams();
 	init_team_map(&team_map);
