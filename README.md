@@ -1,7 +1,7 @@
-shiny-avenger
+elocfb
 =============
 
-Untitled. This is the latest iteration of a football ranking and prediction system.
+This is the latest iteration of a football ranking and prediction system.
 
 
 Building

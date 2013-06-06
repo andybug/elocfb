@@ -10,7 +10,7 @@
 int cmd_parse(int argc, char **argv)
 {
 	if (argc != 3) {
-		fprintf(stderr, "shiny-avenger parse [file.csv]\n");
+		fprintf(stderr, "elocfb parse [file.csv]\n");
 		return EXIT_FAILURE;
 	}
 

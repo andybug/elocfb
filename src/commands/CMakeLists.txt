@@ -1,6 +1,6 @@
 
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
-PROJECT (SHINY-AVENGER)
+PROJECT (ELOCFB)
 
-# create main shiny-avenger executable
+# build commands library
 ADD_LIBRARY (commands init.c parse.c process.c algo.c)

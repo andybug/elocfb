@@ -14,7 +14,7 @@ int cmd_process(int argc, char **argv)
 	int err;
 
 	if (argc != 3) {
-		fprintf(stderr, "shiny-avenger process [file.csv]\n");
+		fprintf(stderr, "elocfb process [file.csv]\n");
 		return EXIT_FAILURE;
 	}
 
