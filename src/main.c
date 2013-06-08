@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "options.h"
+#include "parse.h"
 
 struct elocfb_options options = {0};
 
@@ -12,6 +13,7 @@ struct arguments {
 	int argc;
 	char **argv;
 	int current;
+	char *file;
 };
 
 static const char *usage =
@@ -98,28 +100,37 @@ static void parse_opt(struct arguments *args)
 	}
 }
 
-static void parse_opts(int argc, char **argv)
+static void parse_opts(struct arguments *args)
 {
-	struct arguments args = { argc, argv, 1 };
-
-	for (; args.current < argc; args.current++) {
-		if (argv[args.current][0] == '-') {
-			if (argv[args.current][1] == '-')
-				parse_long_opt(&args);
+	for (args->current = 1; args->current < args->argc; args->current++) {
+		if (args->argv[args->current][0] == '-') {
+			if (args->argv[args->current][1] == '-')
+				parse_long_opt(args);
 			else
-				parse_opt(&args);
+				parse_opt(args);
+		} else {
+			if (args->file == NULL)
+				args->file = args->argv[args->current];
 		}
+	}
+
+	if (!args->file) {
+		fprintf(stderr, "No file specified!\n");
+		exit(EXIT_FAILURE);
 	}
 }
 
 int main(int argc, char **argv)
 {
+	struct arguments args = { argc, argv, 0, NULL };
+
 	if (argc == 1) {
 		puts(usage);
 		exit(EXIT_SUCCESS);
 	}
 
-	parse_opts(argc, argv);
+	parse_opts(&args);
+	parse_ncaa(args.file);
 
 	exit(EXIT_SUCCESS);
 }

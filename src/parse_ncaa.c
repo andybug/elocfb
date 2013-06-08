@@ -185,7 +185,7 @@ int parse_ncaa(const char *file)
 
 	stream = fopen(file, "r");
 	if (!stream) {
-		fprintf(stderr, "Couldn't open '%s'\n", file);
+		fprintf(stderr, "%s: Couldn't open file '%s'\n", __func__, file);
 		return 1;
 	}
 
