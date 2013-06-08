@@ -14,6 +14,15 @@ struct arguments {
 	int current;
 };
 
+static const char *usage =
+	"usage: elocfb [--help] [--version] [--algo <algorithms>] [-n] <file>\n"
+	"\t--help     Display this help message\n"
+	"\t--version  Print version and exit\n"
+	"\t--algo     Select which algorithms to display/save. Can be any\n"
+	"\t           combination of winper, rpi, and elo; comma separated\n"
+	"\t           For instance: --algo rpi,elo\n"
+	"\t-n         Display rank indicator in output\n";
+
 static void set_algo_option(char *algo)
 {
 	if (strcmp(algo, "winper") == 0) {
@@ -63,7 +72,10 @@ static void parse_long_opt(struct arguments *args)
 	char *arg = args->argv[args->current] + 2;
 	char *value;
 
-	if (strcmp(arg, "algo") == 0) {
+	if (strcmp(arg, "help") == 0) {
+		puts(usage);
+		exit(EXIT_SUCCESS);
+	} else if (strcmp(arg, "algo") == 0) {
 		value = get_opt_value(args);
 		parse_algo_value(value);
 	} else {
@@ -102,6 +114,11 @@ static void parse_opts(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+	if (argc == 1) {
+		puts(usage);
+		exit(EXIT_SUCCESS);
+	}
+
 	parse_opts(argc, argv);
 
 	exit(EXIT_SUCCESS);
