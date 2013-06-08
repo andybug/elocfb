@@ -8,6 +8,7 @@
 #include "database.h"
 #include "teams.h"
 #include "results.h"
+#include "options.h"
 
 static PGconn *psql = NULL;
 
@@ -21,7 +22,9 @@ static const char *teams_table_sql =
 
 int db_connect(void)
 {
-	static const char *conninfo = "dbname=shinyavengerdb user=shinyavenger";
+	char conninfo[256];
+
+	sprintf(conninfo, "dbname=%s user=%s", options.dbname, options.dbuser);
 
 	psql = PQconnectdb(conninfo);
 	if (PQstatus(psql) != CONNECTION_OK) {

@@ -8,6 +8,7 @@
 #include "parse.h"
 #include "results.h"
 #include "algorithms.h"
+#include "database.h"
 
 struct elocfb_options options = {0};
 
@@ -20,12 +21,14 @@ struct arguments {
 
 static const char *usage =
 	"usage: elocfb [--help] [--version] [--algo <algorithms>] [-n] <file>\n"
-	"\t--help     Display this help message\n"
-	"\t--version  Print version and exit\n"
-	"\t--algo     Select which algorithms to display/save. Can be any\n"
-	"\t           combination of winper, rpi, and elo; comma separated\n"
-	"\t           For instance: --algo rpi,elo\n"
-	"\t-n         Display rank indicator in output\n";
+	"\t--help      Display this help message\n"
+	"\t--version   Print version and exit\n"
+	"\t--algo      Select which algorithms to display/save. Can be any\n"
+	"\t            combination of winper, rpi, and elo; comma separated\n"
+	"\t            For instance: --algo rpi,elo\n"
+	"\t--database  Specify a database to save output to instead of stdout\n"
+	"\t--user      Specify the user to use when logging in to the database\n"
+	"\t-n          Display rank indicator in output\n";
 
 static void init_options(void)
 {
@@ -93,6 +96,13 @@ static void parse_long_opt(struct arguments *args)
 	} else if (strcmp(arg, "algo") == 0) {
 		value = get_opt_value(args);
 		parse_algo_value(value);
+	} else if (strcmp(arg, "database") == 0) {
+		value = get_opt_value(args);
+		strcpy(options.dbname, value);
+		options.save_to_db = true;
+	} else if (strcmp(arg, "user") == 0) {
+		value = get_opt_value(args);
+		strcpy(options.dbuser, value);
 	} else {
 		fprintf(stderr, "Unknown option '%s'\n", arg);
 		exit(EXIT_FAILURE);
@@ -136,6 +146,7 @@ static void parse_opts(struct arguments *args)
 int main(int argc, char **argv)
 {
 	struct arguments args = { argc, argv, 0, NULL };
+	int err;
 
 	if (argc == 1) {
 		puts(usage);
@@ -151,6 +162,15 @@ int main(int argc, char **argv)
 	algo_winper();
 	algo_rpi();
 	algo_elo();
+
+	if (options.save_to_db) {
+		err = db_connect();
+		if (err)
+			exit(EXIT_FAILURE);
+
+		db_add_teams();
+		db_disconnect();
+	}
 
 	exit(EXIT_SUCCESS);
 }
