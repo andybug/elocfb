@@ -8,6 +8,12 @@
 
 struct elocfb_options options = {0};
 
+struct arguments {
+	int argc;
+	char **argv;
+	int current;
+};
+
 static void set_algo_option(char *algo)
 {
 	if (strcmp(algo, "winper") == 0) {
@@ -22,7 +28,7 @@ static void set_algo_option(char *algo)
 	}
 }
 
-static void parse_algos(char *arg)
+static void parse_algo_value(char *arg)
 {
 	char *token;
 
@@ -34,54 +40,62 @@ static void parse_algos(char *arg)
 	}
 }
 
-static int parse_long_opt(int argc, char **argv, int cur)
+static char *get_opt_value(struct arguments *args)
 {
-	char *arg = argv[cur] + 2;
-	int skip = 0;
+	char *val = NULL;
+	char *opt;
+
+	if (args->current + 1 < args->argc) {
+		args->current++;
+		val = args->argv[args->current];
+	} else {
+		opt = args->argv[args->current];
+		fprintf(stderr, "Option '%s' expected value\n", opt);
+		exit(EXIT_FAILURE);
+	}
+
+	return val;
+
+}
+
+static void parse_long_opt(struct arguments *args)
+{
+	char *arg = args->argv[args->current] + 2;
+	char *value;
 
 	if (strcmp(arg, "algo") == 0) {
-		if (cur + 1 < argc) {
-			parse_algos(argv[cur+1]);
-			skip = 1;
-		}
+		value = get_opt_value(args);
+		parse_algo_value(value);
 	} else {
 		fprintf(stderr, "Unknown option '%s'\n", arg);
 		exit(EXIT_FAILURE);
 	}
-
-	return skip;
 }
 
-static int parse_opt(int argc, char **argv, int cur)
+static void parse_opt(struct arguments *args)
 {
-	char *arg = argv[cur];
-	int skip = 0;
+	char *arg = args->argv[args->current];
 
 	switch (arg[1]) {
 	case 'n':
-		options.output_rank = true;
+		options.output_show_rank = true;
 		break;
 	default:
 		fprintf(stderr, "Unknown option '%s'\n", arg + 1);
 		exit(EXIT_FAILURE);
 	}
-
-	return skip;
 }
 
 static void parse_opts(int argc, char **argv)
 {
-	int i;
-	int skip;
+	struct arguments args = { argc, argv, 1 };
 
-	for (i = 1; i < argc; i++) {
-		if (argv[i][0] == '-') {
-			if (argv[i][1] == '-')
-				skip = parse_long_opt(argc, argv, i);
+	for (; args.current < argc; args.current++) {
+		if (argv[args.current][0] == '-') {
+			if (argv[args.current][1] == '-')
+				parse_long_opt(&args);
 			else
-				skip = parse_opt(argc, argv, i);
-
-			i += skip;
+				parse_opt(&args);
 		}
 	}
 }

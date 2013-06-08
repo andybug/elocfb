@@ -9,7 +9,7 @@ struct elocfb_options {
 	bool output_rpi;
 	bool output_elo;
 	
-	bool output_rank;
+	bool output_show_rank;
 };
 
 extern struct elocfb_options options;
