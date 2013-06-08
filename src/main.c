@@ -6,6 +6,8 @@
 
 #include "options.h"
 #include "parse.h"
+#include "results.h"
+#include "algorithms.h"
 
 struct elocfb_options options = {0};
 
@@ -130,7 +132,13 @@ int main(int argc, char **argv)
 	}
 
 	parse_opts(&args);
+
 	parse_ncaa(args.file);
+	sort_results();
+
+	algo_winper();
+	algo_rpi();
+	algo_elo();
 
 	exit(EXIT_SUCCESS);
 }
