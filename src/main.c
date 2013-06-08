@@ -27,6 +27,17 @@ static const char *usage =
 	"\t           For instance: --algo rpi,elo\n"
 	"\t-n         Display rank indicator in output\n";
 
+static void init_options(void)
+{
+	/* options are zeroed out at startup, so only set what's needed */
+
+	options.output_elo = true;
+
+	strcpy(options.dbname, "elocfb");
+	strcpy(options.dbuser, "elocfb");
+	strcpy(options.dbpassword, "elocfb");
+}
+
 static void set_algo_option(char *algo)
 {
 	if (strcmp(algo, "winper") == 0) {
@@ -131,6 +142,7 @@ int main(int argc, char **argv)
 		exit(EXIT_SUCCESS);
 	}
 
+	init_options();
 	parse_opts(&args);
 
 	parse_ncaa(args.file);
