@@ -4,54 +4,91 @@
 #include <assert.h>
 #include <string.h>
 
-#include "commands.h"
+#include "options.h"
 
-struct cmd_struct {
-	const char *name;
-	int (*func)(int, char**);
-};
+struct elocfb_options options = {0};
 
-static const struct cmd_struct commands[] = {
-	{ "init",	cmd_init    },
-	{ "parse",	cmd_parse   },
-	{ "process",	cmd_process },
-	{ "algo",	cmd_algo    },
-	{ NULL,		NULL        }
-};
-
-static const struct cmd_struct *find_command(const char *name)
+static void set_algo_option(char *algo)
 {
-	const struct cmd_struct *cmd = NULL;
-
-	cmd = commands;
-	while (cmd->name) {
-		if (strcmp(cmd->name, name) == 0)
-			return cmd;
-		cmd++;
+	if (strcmp(algo, "winper") == 0) {
+		options.output_winper = true;
+	} else if (strcmp(algo, "rpi") == 0) {
+		options.output_rpi = true;
+	} else if (strcmp(algo, "elo") == 0) {
+		options.output_elo = true;
+	} else {
+		fprintf(stderr, "Unknown algorithm '%s'\n", algo);
+		exit(EXIT_FAILURE);
 	}
-
-	return NULL;
 }
 
-static int run_command(int argc, char **argv)
+static void parse_algos(char *arg)
 {
-	const struct cmd_struct *cmd;
+	char *token;
 
-	cmd = find_command(argv[1]);
-	if (!cmd) {
-		fprintf(stderr, "unknown command '%s'\n", argv[1]);
+	token = strtok(arg, ",");
+
+	while (token) {
+		set_algo_option(token);
+		token = strtok(NULL, ",");
+	}
+}
+
+static int parse_long_opt(int argc, char **argv, int cur)
+{
+	char *arg = argv[cur] + 2;
+	int skip = 0;
+
+	if (strcmp(arg, "algo") == 0) {
+		if (cur + 1 < argc) {
+			parse_algos(argv[cur+1]);
+			skip = 1;
+		}
+	} else {
+		fprintf(stderr, "Unknown option '%s'\n", arg);
 		exit(EXIT_FAILURE);
 	}
 
-	return cmd->func(argc, argv);
+	return skip;
+}
+
+static int parse_opt(int argc, char **argv, int cur)
+{
+	char *arg = argv[cur];
+	int skip = 0;
+
+	switch (arg[1]) {
+	case 'n':
+		options.output_rank = true;
+		break;
+	default:
+		fprintf(stderr, "Unknown option '%s'\n", arg + 1);
+		exit(EXIT_FAILURE);
+	}
+
+	return skip;
+}
+
+static void parse_opts(int argc, char **argv)
+{
+	int i;
+	int skip;
+
+	for (i = 1; i < argc; i++) {
+		if (argv[i][0] == '-') {
+			if (argv[i][1] == '-')
+				skip = parse_long_opt(argc, argv, i);
+			else
+				skip = parse_opt(argc, argv, i);
+
+			i += skip;
+		}
+	}
 }
 
 int main(int argc, char **argv)
 {
-	int err = EXIT_FAILURE;
+	parse_opts(argc, argv);
 
-	if (argc > 1)
-		err = run_command(argc, argv);
-
-	exit(err);
+	exit(EXIT_SUCCESS);
 }
