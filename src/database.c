@@ -23,7 +23,7 @@ int db_connect(void)
 {
 	char conninfo[256];
 
-	sprintf(conninfo, "dbname=%s user=%s", options.dbname, options.dbuser);
+	snprintf(conninfo, 256, "dbname=%s user=%s", options.dbname, options.dbuser);
 
 	psql = PQconnectdb(conninfo);
 	if (PQstatus(psql) != CONNECTION_OK) {
