@@ -1,10 +1,9 @@
 
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
-PROJECT (SHINY-AVENGER)
+PROJECT (ELOCFB)
 
-ADD_SUBDIRECTORY (commands)
 ADD_SUBDIRECTORY (algorithms)
 
-# create main shiny-avenger executable
-ADD_EXECUTABLE (shiny-avenger main.c teams.c results.c parse_ncaa.c database.c)
-TARGET_LINK_LIBRARIES (shiny-avenger m pq commands algorithms)
+# create main elocfb executable
+ADD_EXECUTABLE (elocfb main.c teams.c results.c parse_ncaa.c database.c output.c)
+TARGET_LINK_LIBRARIES (elocfb m pq algorithms)

@@ -3,20 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../commands.h"
-#include "../teams.h"
-#include "../results.h"
-#include "../parse.h"
-#include "../algorithms.h"
+#include "teams.h"
+#include "results.h"
+#include "algorithms.h"
+#include "options.h"
+#include "output.h"
 
 static struct team *sorted_teams[MAX_TEAMS];
 static int (*compare_func)(const struct team*, const struct team*);
-
-
-static int compare_winper(const struct team *t1, const struct team *t2)
-{
-	return (t1->winper > t2->winper);
-}
 
 static int compare_rpi(const struct team *t1, const struct team *t2)
 {
@@ -28,45 +22,10 @@ static int compare_elo(const struct team *t1, const struct team *t2)
 	return (t1->elo > t2->elo);
 }
 
-
-static void display_winper(void)
-{
-	int i;
-
-	for (i = 0; i < num_teams; i++) {
-		printf("%0.4f\t%s\n",
-				sorted_teams[i]->winper,
-				sorted_teams[i]->name);
-	}
-}
-
-static void display_rpi(void)
-{
-	int i;
-
-	for (i = 0; i < num_teams; i++) {
-		printf("%0.4f\t%s\n",
-				sorted_teams[i]->rpi,
-				sorted_teams[i]->name);
-	}
-}
-
-static void display_elo(void)
-{
-	int i;
-
-	for (i = 0; i < num_teams; i++) {
-		printf("%04d\t%s\n",
-				sorted_teams[i]->elo,
-				sorted_teams[i]->name);
-	}
-}
-
-
 static void add_teams_to_sort_list(void)
 {
 	int i;
-	int added;
+	int added = 0;
 
 	for (i = 0, added = 0; i < num_teams; i++) {
 		sorted_teams[added] = teams + i;
@@ -98,7 +57,7 @@ static void shift_down(int start, int end)
 	}
 }
 
-static void heapify()
+static void heapify(void)
 {
 	/* start is last parent node */
 	int start = (num_teams-1) / 2;
@@ -125,39 +84,74 @@ static void sort(void)
 	}
 }
 
-int cmd_algo(int argc, char **argv)
+static size_t find_longest_name(void)
 {
-	void (*display_func)(void) = NULL;
+	size_t len;
+	size_t longest = 0;
+	int i;
 
-	if (argc != 4)
-		return EXIT_FAILURE;
-
-	parse_ncaa(argv[3]);
-	sort_results();
-
-	if (strcmp("winper", argv[2]) == 0) {
-		algo_winper();
-		compare_func = compare_winper;
-		display_func = display_winper;
-	} else if (strcmp("rpi", argv[2]) == 0) {
-		algo_winper();
-		algo_rpi();
-		compare_func = compare_rpi;
-		display_func = display_rpi;
-	} else if (strcmp("elo", argv[2]) == 0) {
-		algo_winper();
-		algo_rpi();
-		algo_elo();
-		compare_func = compare_elo;
-		display_func = display_elo;
-	} else {
-		fprintf(stderr, "Invalid algorithm '%s'\n", argv[2]);
-		return EXIT_FAILURE;
+	for (i = 0; i < num_teams; i++) {
+		len = strlen(teams[i].name);
+		if (len > longest)
+			longest = len;
 	}
 
-	add_teams_to_sort_list();
-	sort();
-	display_func();
+	return longest;
+}
 
-	return EXIT_SUCCESS;
+static void print_padding(size_t len, size_t longest)
+{
+	size_t num, i;
+
+	/* add 4 spaces so the longest name won't run up against the values */
+	num = (longest-len) + 4;
+
+	for (i = 0; i < num; i++)
+		putchar(' ');
+}
+
+void output_to_stdout(void)
+{
+	int i, num, max_teams;
+	size_t len, longest;
+	bool needs_tab;
+
+	add_teams_to_sort_list();
+
+	switch (options.output_sort_algo) {
+	case ALGO_RPI:
+		compare_func = compare_rpi;
+		break;
+	case ALGO_ELO:
+		compare_func = compare_elo;
+		break;
+	}
+
+	sort();
+	longest = find_longest_name();
+
+	/* set the number of teams to display based on output_max_teams opt */
+	max_teams = options.output_max_teams;
+	num = max_teams == -1 ? num_teams : max_teams;
+
+	for (i = 0; i < num; i++) {
+		len = (size_t) printf("%s", sorted_teams[i]->name);
+		print_padding(len, longest);
+		needs_tab = false;
+
+		if (options.output_rpi) {
+			printf("%0.4f", sorted_teams[i]->rpi);
+			needs_tab = true;
+		}
+
+		if (options.output_elo) {
+			if (needs_tab)
+				putchar('\t');
+
+			printf("%04d", sorted_teams[i]->elo);
+			needs_tab = true;
+		}
+
+		putchar('\n');
+	}
 }

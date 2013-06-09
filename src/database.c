@@ -8,25 +8,27 @@
 #include "database.h"
 #include "teams.h"
 #include "results.h"
+#include "options.h"
 
 static PGconn *psql = NULL;
 
 static const char *teams_table_sql =
-	"CREATE TABLE teams ("
-	"key integer,"
-	"name varchar(128),"
-	"winper float,"
-	"rpi float,"
-	"elo smallint)";
+        "CREATE TABLE teams ("
+        "key integer,"
+        "name varchar(128),"
+        "rpi float,"
+        "elo smallint)";
 
 int db_connect(void)
 {
-	static const char *conninfo = "dbname=shinyavengerdb user=shinyavenger";
+	char conninfo[256];
+
+	sprintf(conninfo, "dbname=%s user=%s", options.dbname, options.dbuser);
 
 	psql = PQconnectdb(conninfo);
 	if (PQstatus(psql) != CONNECTION_OK) {
 		fprintf(stderr, "Failed to connect to the database: %s\n",
-				PQerrorMessage(psql));
+		        PQerrorMessage(psql));
 		db_disconnect();
 		return -1;
 	}
@@ -42,7 +44,7 @@ void db_disconnect(void)
 	}
 }
 
-static void psql_check_error(PGresult *res, const char *msg)
+static void check_error(PGresult *res, const char *msg)
 {
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 		fprintf(stderr, "%s: %s\n", msg, PQerrorMessage(psql));
@@ -60,26 +62,25 @@ void db_add_teams(void)
 	char buf[512];
 
 	res = PQexec(psql, "BEGIN");
-	psql_check_error(res, "SQL BEGIN failed");
+	check_error(res, "SQL BEGIN failed");
 
 	res = PQexec(psql, "DROP TABLE IF EXISTS teams");
-	psql_check_error(res, "SQL DROP TABLE failed");
+	check_error(res, "SQL DROP TABLE failed");
 
 	res = PQexec(psql, teams_table_sql);
-	psql_check_error(res, "SQL CREATE TABLE failed");
+	check_error(res, "SQL CREATE TABLE failed");
 
 	for (i = 0; i < num_teams; i++) {
-		snprintf(buf, 512, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
-				teams[i].key,
-				teams[i].name,
-				teams[i].winper,
-				teams[i].rpi,
-				teams[i].elo);
+		snprintf(buf, 512, "INSERT INTO teams VALUES(%d, '%s', %f, %d)",
+		         teams[i].key,
+		         teams[i].name,
+		         teams[i].rpi,
+		         teams[i].elo);
 
 		res = PQexec(psql, buf);
-		psql_check_error(res, "SQL INSERT failed");
+		check_error(res, "SQL INSERT failed");
 	}
 
 	res = PQexec(psql, "END");
-	psql_check_error(res, "SQL END failed");
+	check_error(res, "SQL END failed");
 }

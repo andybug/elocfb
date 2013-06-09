@@ -44,11 +44,11 @@ void algo_rpi(void)
 
 	for (i = 0; i < num_teams; i++) {
 		owinper = (float) teams[i].owins /
-			(teams[i].owins + teams[i].olosses);
+		          (teams[i].owins + teams[i].olosses);
 		oowinper = (float) teams[i].oowins /
-			(teams[i].oowins + teams[i].oolosses);
+		           (teams[i].oowins + teams[i].oolosses);
 		teams[i].rpi = (0.25*teams[i].winper) +
-			(0.50*owinper) + (0.25*oowinper);
+		               (0.50*owinper) + (0.25*oowinper);
 	}
 
 }
