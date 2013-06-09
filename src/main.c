@@ -11,7 +11,7 @@
 #include "database.h"
 #include "output.h"
 
-struct elocfb_options options = {0};
+struct elocfb_options options;
 
 struct arguments {
 	int argc;
@@ -34,7 +34,7 @@ static const char *usage =
 
 static void init_options(void)
 {
-	/* options are zeroed out at startup, so only set what's needed */
+	memset(&options, 0, sizeof(struct elocfb_options));
 
 	options.output_elo = true;
 	options.output_sort_algo = ALGO_ELO;
