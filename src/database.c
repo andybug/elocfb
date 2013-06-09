@@ -16,7 +16,6 @@ static const char *teams_table_sql =
         "CREATE TABLE teams ("
         "key integer,"
         "name varchar(128),"
-        "winper float,"
         "rpi float,"
         "elo smallint)";
 
@@ -72,10 +71,9 @@ void db_add_teams(void)
 	check_error(res, "SQL CREATE TABLE failed");
 
 	for (i = 0; i < num_teams; i++) {
-		snprintf(buf, 512, "INSERT INTO teams VALUES(%d, '%s', %f, %f, %d)",
+		snprintf(buf, 512, "INSERT INTO teams VALUES(%d, '%s', %f, %d)",
 		         teams[i].key,
 		         teams[i].name,
-		         teams[i].winper,
 		         teams[i].rpi,
 		         teams[i].elo);
 

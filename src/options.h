@@ -11,7 +11,6 @@
 
 struct elocfb_options {
 	/* output */
-	bool output_winper;
 	bool output_rpi;
 	bool output_elo;
 	bool output_show_rank;

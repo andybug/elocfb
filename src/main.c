@@ -25,7 +25,7 @@ static const char *usage =
 	"\t--help      Display this help message\n"
 	"\t--version   Print version and exit\n"
 	"\t--algo      Select which algorithms to display/save. Can be any\n"
-	"\t            combination of winper, rpi, and elo; comma separated\n"
+	"\t            combination of rpi, and elo; comma separated\n"
 	"\t            The first algorithm listed is used for sorting\n"
 	"\t            For instance: --algo rpi,elo\n"
 	"\t--database  Specify a database to save output to instead of stdout\n"
@@ -46,9 +46,7 @@ static void init_options(void)
 
 static void set_algo_option(char *algo, bool is_first)
 {
-	if (strcmp(algo, "winper") == 0) {
-		options.output_winper = true;
-	} else if (strcmp(algo, "rpi") == 0) {
+	if (strcmp(algo, "rpi") == 0) {
 		options.output_rpi = true;
 		if (is_first)
 			options.output_sort_algo = ALGO_RPI;
