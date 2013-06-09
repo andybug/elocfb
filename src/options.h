@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include "algorithms.h"
+
 #define DATABASE_NAME_MAX	128
 #define DATABASE_USER_MAX	128
 #define DATABASE_PASSWORD_MAX	64
@@ -13,6 +15,7 @@ struct elocfb_options {
 	bool output_rpi;
 	bool output_elo;
 	bool output_show_rank;
+	enum algorithm output_sort_algo;
 
 	/* database */
 	bool save_to_db;

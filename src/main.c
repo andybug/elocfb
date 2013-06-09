@@ -9,6 +9,7 @@
 #include "results.h"
 #include "algorithms.h"
 #include "database.h"
+#include "output.h"
 
 struct elocfb_options options = {0};
 
@@ -35,6 +36,7 @@ static void init_options(void)
 	/* options are zeroed out at startup, so only set what's needed */
 
 	options.output_elo = true;
+	options.output_sort_algo = ALGO_ELO;
 
 	strcpy(options.dbname, "elocfb");
 	strcpy(options.dbuser, "elocfb");
@@ -170,7 +172,8 @@ int main(int argc, char **argv)
 
 		db_add_teams();
 		db_disconnect();
-	}
+	} else
+		output_to_stdout();
 
 	exit(EXIT_SUCCESS);
 }
