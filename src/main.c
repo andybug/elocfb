@@ -101,6 +101,9 @@ static void parse_long_opt(struct arguments *args)
 	if (strcmp(arg, "help") == 0) {
 		puts(usage);
 		exit(EXIT_SUCCESS);
+	} else if (strcmp(arg, "version") == 0) {
+		puts("elocfb beta-1");
+		exit(EXIT_SUCCESS);
 	} else if (strcmp(arg, "algo") == 0) {
 		/* since algo list is provided, reset defaults */
 		options.output_elo = false;
