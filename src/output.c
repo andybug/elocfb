@@ -84,9 +84,36 @@ static void sort(void)
 	}
 }
 
+static size_t find_longest_name(void)
+{
+	size_t len;
+	size_t longest = 0;
+	int i;
+
+	for (i = 0; i < num_teams; i++) {
+		len = strlen(teams[i].name);
+		if (len > longest)
+			longest = len;
+	}
+
+	return longest;
+}
+
+static void print_padding(size_t len, size_t longest)
+{
+	size_t num, i;
+
+	/* add 2 spaces so the longest name won't run up against the values */
+	num = (longest-len) + 2;
+
+	for (i = 0; i < num; i++)
+		putchar(' ');
+}
+
 void output_to_stdout(void)
 {
 	int i;
+	size_t len, longest;
 
 	add_teams_to_sort_list();
 
@@ -100,10 +127,12 @@ void output_to_stdout(void)
 	}
 
 	sort();
+	longest = find_longest_name();
 
 	for (i = 0; i < num_teams; i++) {
-		printf("%s\t%0.4f\t%04d\n",
-				sorted_teams[i]->name,
+		len = (size_t) printf("%s", sorted_teams[i]->name);
+		print_padding(len, longest);
+		printf("%0.4f\t%04d\n",
 				sorted_teams[i]->rpi,
 				sorted_teams[i]->elo);
 	}
