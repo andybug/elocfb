@@ -13,8 +13,8 @@ struct elocfb_options {
 	/* output */
 	bool output_rpi;
 	bool output_elo;
-	bool output_show_rank;
 	enum algorithm output_sort_algo;
+	int output_max_teams;
 
 	/* database */
 	bool save_to_db;

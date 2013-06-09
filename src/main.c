@@ -30,7 +30,7 @@ static const char *usage =
 	"\t            For instance: --algo rpi,elo\n"
 	"\t--database  Specify a database to save output to instead of stdout\n"
 	"\t--user      Specify the user to use when logging in to the database\n"
-	"\t-n          Display rank indicator in output\n";
+	"\t-n          Set max number of teams to display\n";
 
 static void init_options(void)
 {
@@ -38,6 +38,7 @@ static void init_options(void)
 
 	options.output_elo = true;
 	options.output_sort_algo = ALGO_ELO;
+	options.output_max_teams = -1;
 
 	strcpy(options.dbname, "elocfb");
 	strcpy(options.dbuser, "elocfb");
@@ -122,10 +123,12 @@ static void parse_long_opt(struct arguments *args)
 static void parse_opt(struct arguments *args)
 {
 	char *arg = args->argv[args->current];
+	char *value;
 
 	switch (arg[1]) {
 	case 'n':
-		options.output_show_rank = true;
+		value = get_opt_value(args);
+		options.output_max_teams = atoi(value);
 		break;
 	default:
 		fprintf(stderr, "Unknown option '%s'\n", arg + 1);

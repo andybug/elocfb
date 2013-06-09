@@ -112,7 +112,7 @@ static void print_padding(size_t len, size_t longest)
 
 void output_to_stdout(void)
 {
-	int i;
+	int i, num, max_teams;
 	size_t len, longest;
 	bool needs_tab;
 
@@ -130,7 +130,11 @@ void output_to_stdout(void)
 	sort();
 	longest = find_longest_name();
 
-	for (i = 0; i < num_teams; i++) {
+	/* set the number of teams to display based on output_max_teams opt */
+	max_teams = options.output_max_teams;
+	num = max_teams == -1 ? num_teams : max_teams;
+
+	for (i = 0; i < num; i++) {
 		len = (size_t) printf("%s", sorted_teams[i]->name);
 		print_padding(len, longest);
 		needs_tab = false;
