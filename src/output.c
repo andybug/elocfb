@@ -103,8 +103,8 @@ static void print_padding(size_t len, size_t longest)
 {
 	size_t num, i;
 
-	/* add 2 spaces so the longest name won't run up against the values */
-	num = (longest-len) + 2;
+	/* add 4 spaces so the longest name won't run up against the values */
+	num = (longest-len) + 4;
 
 	for (i = 0; i < num; i++)
 		putchar(' ');
@@ -114,6 +114,7 @@ void output_to_stdout(void)
 {
 	int i;
 	size_t len, longest;
+	bool needs_tab;
 
 	add_teams_to_sort_list();
 
@@ -132,8 +133,21 @@ void output_to_stdout(void)
 	for (i = 0; i < num_teams; i++) {
 		len = (size_t) printf("%s", sorted_teams[i]->name);
 		print_padding(len, longest);
-		printf("%0.4f\t%04d\n",
-				sorted_teams[i]->rpi,
-				sorted_teams[i]->elo);
+		needs_tab = false;
+
+		if (options.output_rpi) {
+			printf("%0.4f", sorted_teams[i]->rpi);
+			needs_tab = true;
+		}
+
+		if (options.output_elo) {
+			if (needs_tab)
+				putchar('\t');
+
+			printf("%04d", sorted_teams[i]->elo);
+			needs_tab = true;
+		}
+
+		putchar('\n');
 	}
 }
