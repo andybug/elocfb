@@ -127,11 +127,17 @@ static void parse_opt(struct arguments *args)
 {
 	char *arg = args->argv[args->current];
 	char *value;
+	char *endptr;
 
 	switch (arg[1]) {
 	case 'n':
 		value = get_opt_value(args);
-		options.output_max_teams = atoi(value);
+		options.output_max_teams = (int) strtol(value, &endptr, 10);
+		if (endptr == value) {
+			fprintf(stderr, "Illegal value for -n option: '%s'; "
+					"must be numerical\n", value);
+			exit(EXIT_FAILURE);
+		}
 		break;
 	default:
 		fprintf(stderr, "Unknown option '%s'\n", arg + 1);
