@@ -26,6 +26,7 @@ static const char *usage =
 	"\t--version   Print version and exit\n"
 	"\t--algo      Select which algorithms to display/save. Can be any\n"
 	"\t            combination of winper, rpi, and elo; comma separated\n"
+	"\t            The first algorithm listed is used for sorting\n"
 	"\t            For instance: --algo rpi,elo\n"
 	"\t--database  Specify a database to save output to instead of stdout\n"
 	"\t--user      Specify the user to use when logging in to the database\n"
@@ -43,14 +44,18 @@ static void init_options(void)
 	strcpy(options.dbpassword, "elocfb");
 }
 
-static void set_algo_option(char *algo)
+static void set_algo_option(char *algo, bool is_first)
 {
 	if (strcmp(algo, "winper") == 0) {
 		options.output_winper = true;
 	} else if (strcmp(algo, "rpi") == 0) {
 		options.output_rpi = true;
+		if (is_first)
+			options.output_sort_algo = ALGO_RPI;
 	} else if (strcmp(algo, "elo") == 0) {
 		options.output_elo = true;
+		if (is_first)
+			options.output_sort_algo = ALGO_ELO;
 	} else {
 		fprintf(stderr, "Unknown algorithm '%s'\n", algo);
 		exit(EXIT_FAILURE);
@@ -60,12 +65,14 @@ static void set_algo_option(char *algo)
 static void parse_algo_value(char *arg)
 {
 	char *token;
+	bool is_first = true;
 
 	token = strtok(arg, ",");
 
 	while (token) {
-		set_algo_option(token);
+		set_algo_option(token, is_first);
 		token = strtok(NULL, ",");
+		is_first = false;
 	}
 }
 
@@ -96,6 +103,9 @@ static void parse_long_opt(struct arguments *args)
 		puts(usage);
 		exit(EXIT_SUCCESS);
 	} else if (strcmp(arg, "algo") == 0) {
+		/* since algo list is provided, reset defaults */
+		options.output_elo = false;
+
 		value = get_opt_value(args);
 		parse_algo_value(value);
 	} else if (strcmp(arg, "database") == 0) {
