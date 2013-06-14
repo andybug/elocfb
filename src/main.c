@@ -21,16 +21,16 @@ struct arguments {
 };
 
 static const char *usage =
-	"usage: elocfb [--help] [--version] [--algo <algorithms>] [-n] <file>\n"
-	"\t--help      Display this help message\n"
-	"\t--version   Print version and exit\n"
-	"\t--algo      Select which algorithms to display/save. Can be any\n"
-	"\t            combination of rpi, and elo; comma separated\n"
-	"\t            The first algorithm listed is used for sorting\n"
-	"\t            For instance: --algo rpi,elo\n"
-	"\t--database  Specify a database to save output to instead of stdout\n"
-	"\t--user      Specify the user to use when logging in to the database\n"
-	"\t-n          Set max number of teams to display\n";
+        "usage: elocfb [--help] [--version] [--algo <algorithms>] [-n] <file>\n"
+        "\t--help      Display this help message\n"
+        "\t--version   Print version and exit\n"
+        "\t--algo      Select which algorithms to display/save. Can be any\n"
+        "\t            combination of rpi, and elo; comma separated\n"
+        "\t            The first algorithm listed is used for sorting\n"
+        "\t            For instance: --algo rpi,elo\n"
+        "\t--database  Specify a database to save output to instead of stdout\n"
+        "\t--user      Specify the user to use when logging in to the database\n"
+        "\t-n          Set max number of teams to display\n";
 
 static void init_options(void)
 {
@@ -135,7 +135,7 @@ static void parse_opt(struct arguments *args)
 		options.output_max_teams = (int) strtol(value, &endptr, 10);
 		if (endptr == value) {
 			fprintf(stderr, "Illegal value for -n option: '%s'; "
-					"must be numerical\n", value);
+			        "must be numerical\n", value);
 			exit(EXIT_FAILURE);
 		}
 		break;

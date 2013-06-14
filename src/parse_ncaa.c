@@ -58,7 +58,7 @@ static time_t parse_date(const char *str)
 
 static void set_tz_env(void)
 {
-	/* 
+	/*
 	 * Ensure that the TZ environment variable is set, otherwise mktime
 	 * will run really slow
 	 */
