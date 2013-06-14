@@ -5,8 +5,8 @@
 #include "../teams.h"
 #include "../results.h"
 
-#define ELO_AVERAGE 	1200.0
-#define ELO_KFACTOR	32.0
+#define ELO_AVERAGE     1200.0
+#define ELO_KFACTOR     32.0
 
 static void seed_elo(void)
 {

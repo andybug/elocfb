@@ -30,11 +30,11 @@ void add_team(struct team_map *map, struct team *team)
 	while (map->entries[i].key != 0) {
 		if (iters >= num_teams) {
 			fprintf(stderr, "%s: Team hash table full; could not "
-			        "add key '%d'\n", __func__, team->key);
+				"add key '%d'\n", __func__, team->key);
 			exit(EXIT_FAILURE);
 		}
 
-		i = (i+1) & mask;
+		i = (i + 1) & mask;
 		iters++;
 	}
 
@@ -51,7 +51,7 @@ struct team *find_team(struct team_map *map, int key)
 		if (map->entries[i].key == 0 || iters >= num_teams)
 			return NULL;
 
-		i = (i+1) & mask;
+		i = (i + 1) & mask;
 		iters++;
 	}
 

@@ -11,14 +11,14 @@ static void shift(struct result *a, int start, int end)
 	int swap;
 	struct result temp;
 
-	while ((root*2) + 1 <= end) {
-		child = (root*2) + 1;
+	while ((root * 2) + 1 <= end) {
+		child = (root * 2) + 1;
 		swap = root;
 
 		if (a[swap].date < a[child].date)
 			swap = child;
 
-		if (child+1 <= end && a[swap].date < a[child+1].date)
+		if (child + 1 <= end && a[swap].date < a[child + 1].date)
 			swap = child + 1;
 
 		if (swap != root) {
@@ -33,10 +33,10 @@ static void shift(struct result *a, int start, int end)
 
 static void heapify(struct result *a, int count)
 {
-	int start = (count-1) / 2;
+	int start = (count - 1) / 2;
 
 	while (start >= 0) {
-		shift(a, start, count-1);
+		shift(a, start, count - 1);
 		start--;
 	}
 }
@@ -70,10 +70,9 @@ int result_exists(int key1, int key2, time_t date)
 		if (r->home_key == key1 && r->away_key == key2) {
 			if (r->date == date)
 				return 1;
-		} else if (r->home_key == key2 && r->away_key == key1) {
+		} else if (r->home_key == key2 && r->away_key == key1)
 			if (r->date == date)
 				return 1;
-		}
 	}
 
 	return 0;
