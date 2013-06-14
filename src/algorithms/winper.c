@@ -34,5 +34,5 @@ void algo_winper(void)
 
 	for (i = 0; i < num_teams; i++)
 		teams[i].winper = (float)teams[i].wins /
-				  (teams[i].wins + teams[i].losses);
+		                  (teams[i].wins + teams[i].losses);
 }
