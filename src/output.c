@@ -110,6 +110,20 @@ static void print_padding(size_t len, size_t longest)
 		putchar(' ');
 }
 
+static void print_heading(size_t longest)
+{
+	fputs("TEAM", stdout);
+	print_padding(4, longest);
+
+	if (options.output_rpi)
+		fputs("   RPI\t", stdout);
+
+	if (options.output_elo)
+		fputs(" ELO", stdout);
+
+	putchar('\n');
+}
+
 void output_to_stdout(void)
 {
 	int i, num, max_teams;
@@ -129,6 +143,8 @@ void output_to_stdout(void)
 
 	sort();
 	longest = find_longest_name();
+
+	print_heading(longest);
 
 	/* set the number of teams to display based on output_max_teams opt */
 	max_teams = options.output_max_teams;
