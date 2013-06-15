@@ -20,17 +20,17 @@ struct arguments {
 	char *file;
 };
 
-static const char *usage =
-	"usage: elocfb [--help] [--version] [--algo <algorithms>] [-n] <file>\n"
-	"\t--help      Display this help message\n"
-	"\t--version   Print version and exit\n"
-	"\t--algo      Select which algorithms to display/save. Can be any\n"
-	"\t            combination of rpi, and elo; comma separated\n"
-	"\t            The first algorithm listed is used for sorting\n"
-	"\t            For instance: --algo rpi,elo\n"
-	"\t--database  Specify a database to save output to instead of stdout\n"
-	"\t--user      Specify the user to use when logging in to the database\n"
-	"\t-n          Set max number of teams to display\n";
+static const char usage[] =
+        "usage: elocfb [--help] [--version] [--algo <algorithms>] [-n] <file>\n"
+        "\t--help      Display this help message\n"
+        "\t--version   Print version and exit\n"
+        "\t--algo      Select which algorithms to display/save. Can be any\n"
+        "\t            combination of rpi, and elo; comma separated\n"
+        "\t            The first algorithm listed is used for sorting\n"
+        "\t            For instance: --algo rpi,elo\n"
+        "\t--database  Specify a database to save output to instead of stdout\n"
+        "\t--user      Specify the user to use when logging in to the database\n"
+        "\t-n          Set max number of teams to display\n";
 
 static void init_options(void)
 {
@@ -102,7 +102,8 @@ static void parse_long_opt(struct arguments *args)
 		puts(usage);
 		exit(EXIT_SUCCESS);
 	} else if (strcmp(arg, "version") == 0) {
-		puts("elocfb beta-1");
+		puts("elocfb release-1");
+		puts("Andrew Fields <andybug10@gmail.com>");
 		exit(EXIT_SUCCESS);
 	} else if (strcmp(arg, "algo") == 0) {
 		/* since algo list is provided, reset defaults */
@@ -127,11 +128,17 @@ static void parse_opt(struct arguments *args)
 {
 	char *arg = args->argv[args->current];
 	char *value;
+	char *endptr;
 
 	switch (arg[1]) {
 	case 'n':
 		value = get_opt_value(args);
-		options.output_max_teams = atoi(value);
+		options.output_max_teams = (int)strtol(value, &endptr, 10);
+		if (endptr == value) {
+			fprintf(stderr, "Illegal value for -n option: '%s'; "
+			        "must be numerical\n", value);
+			exit(EXIT_FAILURE);
+		}
 		break;
 	default:
 		fprintf(stderr, "Unknown option '%s'\n", arg + 1);
@@ -147,10 +154,8 @@ static void parse_opts(struct arguments *args)
 				parse_long_opt(args);
 			else
 				parse_opt(args);
-		} else {
-			if (args->file == NULL)
-				args->file = args->argv[args->current];
-		}
+		} else if (args->file == NULL)
+			args->file = args->argv[args->current];
 	}
 
 	if (!args->file) {

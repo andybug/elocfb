@@ -1,6 +1,6 @@
 
 /* need this for strptime() and setenv() */
-#define _XOPEN_SOURCE	600
+#define _XOPEN_SOURCE   600
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,15 +27,15 @@ static const char *header_entries[] = {
 };
 
 /* Indicies that correspond to the header_entries above */
-#define FIELD_TEAM_KEY		0
-#define FIELD_TEAM_NAME		1
-#define FIELD_DATE		2
-#define FIELD_OPP_KEY		3
-#define FIELD_OPP_NAME		4
-#define FIELD_TEAM_SCORE	5
-#define FIELD_OPP_SCORE		6
-#define FIELD_LOCATION		7
-#define NUM_FIELDS 		8
+#define FIELD_TEAM_KEY          0
+#define FIELD_TEAM_NAME         1
+#define FIELD_DATE              2
+#define FIELD_OPP_KEY           3
+#define FIELD_OPP_NAME          4
+#define FIELD_TEAM_SCORE        5
+#define FIELD_OPP_SCORE         6
+#define FIELD_LOCATION          7
+#define NUM_FIELDS              8
 
 /*
  * This map tracks which teams have had their schedules completely parsed. This
@@ -58,7 +58,7 @@ static time_t parse_date(const char *str)
 
 static void set_tz_env(void)
 {
-	/* 
+	/*
 	 * Ensure that the TZ environment variable is set, otherwise mktime
 	 * will run really slow
 	 */
@@ -105,20 +105,20 @@ static void parse_record(char *tokens[])
 	if (strcmp("Home", tokens[FIELD_LOCATION]) == 0) {
 		result->home_key = key;
 		result->away_key = key2;
-		result->home_pts = (short) atoi(tokens[FIELD_TEAM_SCORE]);
-		result->away_pts = (short) atoi(tokens[FIELD_OPP_SCORE]);
+		result->home_pts = (short)atoi(tokens[FIELD_TEAM_SCORE]);
+		result->away_pts = (short)atoi(tokens[FIELD_OPP_SCORE]);
 		result->neutral = false;
 	} else if (strcmp("Away", tokens[FIELD_LOCATION]) == 0) {
 		result->home_key = key2;
 		result->away_key = key;
-		result->home_pts = (short) atoi(tokens[FIELD_OPP_SCORE]);
-		result->away_pts = (short) atoi(tokens[FIELD_TEAM_SCORE]);
+		result->home_pts = (short)atoi(tokens[FIELD_OPP_SCORE]);
+		result->away_pts = (short)atoi(tokens[FIELD_TEAM_SCORE]);
 		result->neutral = false;
 	} else if (strcmp("Neutral Site", tokens[FIELD_LOCATION]) == 0) {
 		result->home_key = key;
 		result->away_key = key2;
-		result->home_pts = (short) atoi(tokens[FIELD_TEAM_SCORE]);
-		result->away_pts = (short) atoi(tokens[FIELD_OPP_SCORE]);
+		result->home_pts = (short)atoi(tokens[FIELD_TEAM_SCORE]);
+		result->away_pts = (short)atoi(tokens[FIELD_OPP_SCORE]);
 		result->neutral = true;
 	}
 
@@ -161,10 +161,9 @@ static int parse_header(char *line)
 	if (num_tokens != NUM_FIELDS)
 		error = true;
 
-	for (i = 0; i < num_tokens && !error; i++) {
+	for (i = 0; i < num_tokens && !error; i++)
 		if (strcmp(header_entries[i], tokens[i]) != 0)
 			error = true;
-	}
 
 	return error;
 }

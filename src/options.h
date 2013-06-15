@@ -5,9 +5,9 @@
 
 #include "algorithms.h"
 
-#define DATABASE_NAME_MAX	128
-#define DATABASE_USER_MAX	128
-#define DATABASE_PASSWORD_MAX	64
+#define DATABASE_NAME_MAX       128
+#define DATABASE_USER_MAX       128
+#define DATABASE_PASSWORD_MAX   64
 
 struct elocfb_options {
 	/* output */

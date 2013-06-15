@@ -14,12 +14,12 @@ static int (*compare_func)(const struct team*, const struct team*);
 
 static int compare_rpi(const struct team *t1, const struct team *t2)
 {
-	return (t1->rpi > t2->rpi);
+	return t1->rpi > t2->rpi;
 }
 
 static int compare_elo(const struct team *t1, const struct team *t2)
 {
-	return (t1->elo > t2->elo);
+	return t1->elo > t2->elo;
 }
 
 static void add_teams_to_sort_list(void)
@@ -40,12 +40,12 @@ static void shift_down(int start, int end)
 	int swap;
 	struct team *temp;
 
-	while ((root*2) + 1 <= end) {
-		child = (root*2) + 1;
+	while ((root * 2) + 1 <= end) {
+		child = (root * 2) + 1;
 		swap = root;
 		if (compare_func(sorted_teams[swap], sorted_teams[child]))
 			swap = child;
-		if (child+1 <= end && compare_func(sorted_teams[swap], sorted_teams[child+1]))
+		if (child + 1 <= end && compare_func(sorted_teams[swap], sorted_teams[child + 1]))
 			swap = child + 1;
 		if (swap != root) {
 			temp = sorted_teams[root];
@@ -60,10 +60,10 @@ static void shift_down(int start, int end)
 static void heapify(void)
 {
 	/* start is last parent node */
-	int start = (num_teams-1) / 2;
+	int start = (num_teams - 1) / 2;
 
 	while (start >= 0) {
-		shift_down(start, num_teams-1);
+		shift_down(start, num_teams - 1);
 		start--;
 	}
 }
@@ -104,10 +104,24 @@ static void print_padding(size_t len, size_t longest)
 	size_t num, i;
 
 	/* add 4 spaces so the longest name won't run up against the values */
-	num = (longest-len) + 4;
+	num = (longest - len) + 4;
 
 	for (i = 0; i < num; i++)
 		putchar(' ');
+}
+
+static void print_heading(size_t longest)
+{
+	fputs("TEAM", stdout);
+	print_padding(4, longest);
+
+	if (options.output_rpi)
+		fputs("   RPI\t", stdout);
+
+	if (options.output_elo)
+		fputs(" ELO", stdout);
+
+	putchar('\n');
 }
 
 void output_to_stdout(void)
@@ -130,12 +144,14 @@ void output_to_stdout(void)
 	sort();
 	longest = find_longest_name();
 
+	print_heading(longest);
+
 	/* set the number of teams to display based on output_max_teams opt */
 	max_teams = options.output_max_teams;
 	num = max_teams == -1 ? num_teams : max_teams;
 
 	for (i = 0; i < num; i++) {
-		len = (size_t) printf("%s", sorted_teams[i]->name);
+		len = (size_t)printf("%s", sorted_teams[i]->name);
 		print_padding(len, longest);
 		needs_tab = false;
 

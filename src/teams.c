@@ -34,7 +34,7 @@ void add_team(struct team_map *map, struct team *team)
 			exit(EXIT_FAILURE);
 		}
 
-		i = (i+1) & mask;
+		i = (i + 1) & mask;
 		iters++;
 	}
 
@@ -51,7 +51,7 @@ struct team *find_team(struct team_map *map, int key)
 		if (map->entries[i].key == 0 || iters >= num_teams)
 			return NULL;
 
-		i = (i+1) & mask;
+		i = (i + 1) & mask;
 		iters++;
 	}
 
