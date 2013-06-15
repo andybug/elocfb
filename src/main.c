@@ -102,7 +102,8 @@ static void parse_long_opt(struct arguments *args)
 		puts(usage);
 		exit(EXIT_SUCCESS);
 	} else if (strcmp(arg, "version") == 0) {
-		puts("elocfb beta-1");
+		puts("elocfb release-1");
+		puts("Andrew Fields <andybug10@gmail.com>");
 		exit(EXIT_SUCCESS);
 	} else if (strcmp(arg, "algo") == 0) {
 		/* since algo list is provided, reset defaults */
