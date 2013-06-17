@@ -177,6 +177,8 @@ int main(int argc, char **argv)
 	init_options();
 	parse_opts(&args);
 
+	serialize_algos();
+
 	parse_ncaa(args.file);
 	sort_results();
 
