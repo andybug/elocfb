@@ -13,8 +13,8 @@ enum visited {
 };
 
 struct algorithm algorithms[NUM_ALGOS] = {
-	{ "rpi", ALGO_RPI, NULL, { 0 } , 0 , NULL},
-	{ "elo", ALGO_ELO, NULL, { ALGO_RPI }, 1 , NULL}
+	{ "rpi", ALGO_RPI, algo_rpi_hook, { 0 } , 0 , NULL},
+	{ "elo", ALGO_ELO, algo_elo_hook, { ALGO_RPI }, 1 , NULL}
 };
 
 struct algorithm *algo_list = NULL;

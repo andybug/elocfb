@@ -164,6 +164,19 @@ static void parse_opts(struct arguments *args)
 	}
 }
 
+static void process_results(void)
+{
+	int i;
+	struct algorithm *a = algo_list;
+
+	for (i = 0; i < num_results; i++) {
+		while (a) {
+			a->hook(0, results + i);
+			a = a->next;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	struct arguments args = { argc, argv, 0, NULL };
@@ -182,6 +195,9 @@ int main(int argc, char **argv)
 	parse_ncaa(args.file);
 	sort_results();
 
+	process_results();
+
+	/* remove these! */
 	algo_winper();
 	algo_rpi();
 	algo_elo();

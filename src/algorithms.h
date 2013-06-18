@@ -14,6 +14,9 @@ extern void algo_winper(void);
 extern void algo_rpi(void);
 extern void algo_elo(void);
 
+extern void algo_rpi_hook(int, struct result*);
+extern void algo_elo_hook(int, struct result*);
+
 struct algorithm {
 	const char *name;
 	enum algorithm_id algo;

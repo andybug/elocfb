@@ -52,3 +52,7 @@ void algo_rpi(void)
 	}
 
 }
+
+void algo_rpi_hook(int week, struct result *result)
+{
+}

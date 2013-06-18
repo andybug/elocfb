@@ -47,3 +47,7 @@ void algo_elo(void)
 		t2->elo += (short)(ELO_KFACTOR * (t2win - exp2));
 	}
 }
+
+void algo_elo_hook(int week, struct result *result)
+{
+}
