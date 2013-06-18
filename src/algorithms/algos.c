@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "algorithms.h"
+#include "../algorithms.h"
 
 enum visited {
 	VISIT_NONE = 0,
