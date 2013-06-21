@@ -26,7 +26,7 @@ struct algorithm {
 	struct algorithm *next;
 };
 
-extern struct algorithm *algo_list;
+extern void (*algo_hooks[NUM_ALGOS])(int, struct result*);
 
 extern void serialize_algos(void);
 

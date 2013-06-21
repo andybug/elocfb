@@ -166,14 +166,11 @@ static void parse_opts(struct arguments *args)
 
 static void process_results(void)
 {
-	int i;
-	struct algorithm *a = algo_list;
+	int i, j;
 
 	for (i = 0; i < num_results; i++) {
-		while (a) {
-			a->hook(0, results + i);
-			a = a->next;
-		}
+		for (j = 0; j < NUM_ALGOS; j++)
+			algo_hooks[j](0, results + i);
 	}
 }
 

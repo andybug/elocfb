@@ -17,8 +17,10 @@ struct algorithm algorithms[NUM_ALGOS] = {
 	{ "elo", ALGO_ELO, algo_elo_hook, { ALGO_RPI }, 1 , NULL}
 };
 
-struct algorithm *algo_list = NULL;
-struct algorithm *algo_list_tail = NULL;
+static struct algorithm *algo_list = NULL;
+static struct algorithm *algo_list_tail = NULL;
+
+void (*algo_hooks[NUM_ALGOS])(int, struct result*);
 
 void add_algo(struct algorithm *algo)
 {
@@ -58,6 +60,7 @@ void serialize_algos(void)
 {
 	enum visited states[NUM_ALGOS];
 	int i;
+	struct algorithm *a;
 
 	memset(states, 0, sizeof(enum visited) * NUM_ALGOS);
 
@@ -65,5 +68,13 @@ void serialize_algos(void)
 		assert((int) algorithms[i].algo == i + 1);
 		if (states[i] != VISIT_DONE)
 			visit_node(states, i);
+	}
+
+	/* add the hooks from the sorted algorithms to the hooks list */
+	a = algo_list;
+	for (i = 0; i < NUM_ALGOS; i++) {
+		assert(a != NULL);
+		algo_hooks[i] = a->hook;
+		a = a->next;
 	}
 }
