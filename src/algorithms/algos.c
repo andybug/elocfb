@@ -12,9 +12,9 @@ enum visited {
 	VISIT_DONE
 };
 
-struct algorithm algorithms[NUM_ALGOS] = {
-	{ "rpi", ALGO_RPI, algo_rpi_hook, { 0 } , 0 , NULL},
-	{ "elo", ALGO_ELO, algo_elo_hook, { ALGO_RPI }, 1 , NULL}
+static struct algorithm *algorithms[NUM_ALGOS] = {
+	&algo_rpi_def,
+	&algo_elo_def
 };
 
 static struct algorithm *algo_list = NULL;
@@ -47,11 +47,11 @@ void visit_node(enum visited *states, int i)
 	if (states[i] == VISIT_NONE) {
 		states[i] = VISIT_PART;
 
-		for (j = 0; j < algorithms[i].num_deps; j++)
-			visit_node(states, (int) algorithms[i].deps[j] - 1);
+		for (j = 0; j < algorithms[i]->depends.num_depends; j++)
+			visit_node(states, (int) algorithms[i]->depends.depends[j] - 1);
 
 		states[i] = VISIT_DONE;
-		add_algo(algorithms + i);
+		add_algo(algorithms[i]);
 	}
 }
 
@@ -65,7 +65,7 @@ void serialize_algos(void)
 	memset(states, 0, sizeof(enum visited) * NUM_ALGOS);
 
 	for (i = 0; i < NUM_ALGOS; i++) {
-		assert((int) algorithms[i].algo == i + 1);
+		assert((int) algorithms[i]->algo == i + 1);
 		if (states[i] != VISIT_DONE)
 			visit_node(states, i);
 	}

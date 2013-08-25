@@ -3,6 +3,17 @@
 #include "../results.h"
 #include "../teams.h"
 
+void algo_rpi_hook(int week, struct result *result);
+static const enum algorithm_id rpi_depends[] = {};
+
+struct algorithm algo_rpi_def = {
+	"rpi",
+	ALGO_RPI,
+	algo_rpi_hook,
+	{rpi_depends, 0},
+	NULL
+};
+
 void algo_rpi(void)
 {
 	struct team *t1, *t2;

@@ -8,6 +8,17 @@
 #define ELO_AVERAGE     1200.0
 #define ELO_KFACTOR     64.0
 
+void algo_elo_hook(int week, struct result *result);
+static const enum algorithm_id elo_depends[] = {ALGO_RPI};
+
+struct algorithm algo_elo_def = {
+	"elo",
+	ALGO_ELO,
+	algo_elo_hook,
+	{elo_depends, 1},
+	NULL
+};
+
 static void seed_elo(void)
 {
 	int i;
